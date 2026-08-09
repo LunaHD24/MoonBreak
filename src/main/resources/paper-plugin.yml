@@ -1,0 +1,12 @@
+name: MoonBreak
+description: $description
+prefix: MoonBreak
+version: '${version}'
+
+main: dev.lunaa.moonbreak.MoonBreak
+api-version: '26.2'
+load: STARTUP
+bootstrapper: dev.lunaa.moonbreak.MoonBreakBootstrap
+
+authors: [ lunahd24 ]
+website: https://lunaa.dev/
