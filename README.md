@@ -92,4 +92,4 @@ block.placeInWorld();
 
 ## Documentation & License
 Documentation can be found in the wiki [here](https://github.com/LunaHD24/MoonBreak/wiki).<br>
-MoonBreak is licensed under the Apache 2.0 License.
+MoonBreak is licensed under the GNU General Public License v3.0
