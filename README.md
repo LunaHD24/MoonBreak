@@ -1,0 +1,95 @@
+**MoonBreak is an easy-to-use, high-performance Custom Tool and Block API**
+
+## Feature Overview
+- Complete vanilla-like Breaking Simulation
+- Custom Blocks with their own Hardness values
+- Custom Tools with own speeds, durability & more
+- Ability to disable vanilla Behaviors for specific Tools
+
+## Gradle/Maven Integration
+
+### Gradle
+Kotlin
+```kotlin
+repositories {
+    maven("https://lunaa.dev/maven/repository")
+}
+
+dependencies {
+    compileOnly("dev.lunaa.moonbreak:moonbreak-api:1.0.0")
+}
+```
+Groovy
+```groovy
+repositories {
+    maven {
+        url = 'https://lunaa.dev/maven/repository'
+    }
+}
+
+dependencies {
+    compileOnly 'dev.lunaa.moonbreak:moonbreak-api:1.0.0'
+}
+```
+
+### Maven
+```xml
+<repositories>
+    <repository>
+        <id>lunaa-dev-repo</id>
+        <url>https://lunaa.dev/maven/repository/</url>
+    </repository>
+</repositories>
+<dependencies>
+    <dependency>
+        <groupId>dev.lunaa.moonbreak</groupId>
+        <artifactId>moonbreak-api</artifactId>
+        <version>1.0.0</version>
+        <scope>provided</scope>
+    </dependency>
+</dependencies>
+```
+
+## Getting Started
+
+### Creating a Custom Tool
+(Mining Speed is not limited to vanilla values)
+```java
+CustomToolType HAMMER = CustomToolType.builder()
+        .name(Component.text("Hammer"))
+        .material(Material.MACE)
+        .speed(CustomToolType.MiningSpeed.GOLD)
+        .maxDurability(1000)
+        .affectedByWrongTool(true)
+        .affectedUnderwater(true)
+        .affectedByFloating(false)
+        .build();
+
+private void init() {
+    BuiltinRegistries.TOOL_TYPE.register(Key.key("example:hammer"), HAMMER);
+}
+```
+Obtaining the itemstack is as simple as:
+```java
+CustomTool tool = CustomTool.of(HAMMER);
+ItemStack toolItem = tool.itemStack();
+```
+
+### Creating a Custom Block
+(Block Hardness is not limited to vanilla values)
+```java
+CustomBlockType LIGHT_OBSIDIAN = CustomBlockType.of(Material.OBSIDIAN, Material.STONE); // Copies the Hardness of Stone (=1.5). Not limited to vanilla values
+
+private void init() {
+    BuiltinRegistries.BLOCK_TYPE.register(Key.key("example:light_obsidian"), LIGHT_OBSIDIAN);
+}
+```
+Placing the block is as simple as:
+```java
+CustomBlock block = CustomBlock.of(LIGHT_OBSIDIAN, new Location(0, 70, 0));
+block.placeInWorld();
+```
+
+## Documentation & License
+Documentation can be found in the wiki [here](https://github.com/LunaHD24/MoonBreak/wiki).<br>
+MoonBreak is licensed under the Apache 2.0 License.
