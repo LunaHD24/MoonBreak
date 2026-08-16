@@ -2,17 +2,7 @@ package dev.lunaa.moonbreak.block;
 
 import dev.lunaa.moonbreak.MoonBreakApi;
 import dev.lunaa.moonbreak.registry.Registrable;
-import dev.lunaa.moonbreak.tool.CustomTool;
-import io.papermc.paper.event.block.BlockBreakProgressUpdateEvent;
 import org.bukkit.Material;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockDamageAbortEvent;
-import org.bukkit.event.block.BlockDamageEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.player.PlayerInteractAtEntityEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-
-import java.util.function.BiConsumer;
 
 /**
  * Represents a BlockType which holds information about the hardness and placing material of said block
@@ -50,29 +40,4 @@ public interface CustomBlockType extends Registrable {
      * @return the hardness
      */
     float hardness();
-
-    interface Builder {
-
-        Builder material(Material material);
-
-        Builder hardness(float hardness);
-
-        Builder onBlockDamage(BiConsumer<BlockDamageEvent, CustomTool> action);
-
-        Builder onBlockDamageUpdate(BiConsumer<BlockBreakProgressUpdateEvent, CustomTool> action);
-
-        Builder onBlockDamageAbort(BiConsumer<BlockDamageAbortEvent, CustomTool> action);
-
-        Builder onPreBlockBreak(BiConsumer<BlockBreakEvent, CustomTool> action);
-
-        Builder onPostBlockBreak(BiConsumer<BlockBreakEvent, CustomTool> action);
-
-        Builder onInteract(BiConsumer<PlayerInteractEvent, CustomTool> action);
-
-        Builder onInteractAtEntity(BiConsumer<PlayerInteractAtEntityEvent, CustomTool> action);
-
-        Builder onEntityDamage(BiConsumer<EntityDamageByEntityEvent, CustomTool> action);
-
-        CustomBlockType build();
-    }
 }

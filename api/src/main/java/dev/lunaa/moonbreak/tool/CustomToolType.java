@@ -2,13 +2,21 @@ package dev.lunaa.moonbreak.tool;
 
 import dev.lunaa.moonbreak.MoonBreakApi;
 import dev.lunaa.moonbreak.registry.Registrable;
+import io.papermc.paper.event.block.BlockBreakProgressUpdateEvent;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDamageAbortEvent;
+import org.bukkit.event.block.BlockDamageEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 /**
  * Represents a ToolType which holds information about how a tool of this type should behave
@@ -217,6 +225,33 @@ public interface CustomToolType extends Registrable {
          * @return the builder
          */
         Builder affectedByFloating(boolean affected);
+
+        /*
+        interface Builder {
+
+        Builder material(Material material);
+
+        Builder hardness(float hardness);
+
+        Builder onBlockDamage(BiConsumer<BlockDamageEvent, CustomTool> action);
+
+        Builder onBlockDamageUpdate(BiConsumer<BlockBreakProgressUpdateEvent, CustomTool> action);
+
+        Builder onBlockDamageAbort(BiConsumer<BlockDamageAbortEvent, CustomTool> action);
+
+        Builder onPreBlockBreak(BiConsumer<BlockBreakEvent, CustomTool> action);
+
+        Builder onPostBlockBreak(BiConsumer<BlockBreakEvent, CustomTool> action);
+
+        Builder onInteract(BiConsumer<PlayerInteractEvent, CustomTool> action);
+
+        Builder onInteractAtEntity(BiConsumer<PlayerInteractAtEntityEvent, CustomTool> action);
+
+        Builder onEntityDamage(BiConsumer<EntityDamageByEntityEvent, CustomTool> action);
+
+        CustomBlockType build();
+    }
+         */
 
         /**
          * Builds the ToolType
