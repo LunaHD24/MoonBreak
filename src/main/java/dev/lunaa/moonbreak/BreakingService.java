@@ -14,10 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class BreakingService {
 
@@ -27,6 +24,8 @@ public class BreakingService {
 
     public void updateBreakSpeeds() {
         updateActivePlayers();
+        if (activePlayers.isEmpty()) return;
+        System.out.println("Updating break speeds");
 
         for (UUID uuid : activePlayers.keySet()) {
             Player player = Bukkit.getPlayer(uuid);
@@ -36,11 +35,11 @@ public class BreakingService {
             Block block = player.getTargetBlockExact((int) Math.ceil(range), FluidCollisionMode.NEVER);
             if (block == null) {
                 resetToInitialValues(player);
-                return;
+                continue;
             }
 
-            if (lastLookedAt.containsKey(player.getUniqueId()) && lastLookedAt.get(player.getUniqueId()) == block.getLocation()) {
-                return;
+            if (lastLookedAt.containsKey(player.getUniqueId()) && lastLookedAt.get(player.getUniqueId()).equals(block.getLocation())) {
+                continue;
             }
             lastLookedAt.put(player.getUniqueId(), block.getLocation());
 
@@ -68,8 +67,17 @@ public class BreakingService {
     }
 
     private void updateActivePlayers() {
-        activePlayers.entrySet().removeIf(entry -> entry.getValue() > INACTIVE_DELAY_TICKS);
-        activePlayers.entrySet().forEach(entry -> entry.setValue(entry.getValue() + 1));
+        if (activePlayers.isEmpty()) return;
+
+        Iterator<Map.Entry<UUID, Integer>> it = activePlayers.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<UUID, Integer> entry = it.next();
+            if (entry.getValue() > INACTIVE_DELAY_TICKS) {
+                it.remove();
+                continue;
+            }
+            entry.setValue(entry.getValue() + 1);
+        }
     }
 
     private void resetToInitialValues(Player player) {
@@ -77,6 +85,7 @@ public class BreakingService {
     }
 
     private void calcBlockBreakSpeed(Player player, @Nullable CustomTool tool, Block block, @Nullable CustomBlock customBlock) {
+        System.out.println("Calculate");
         float vanillaBlockHardness = block.getType().getHardness();
         double breakSpeed = customBlock != null ? 1f/(customBlock.type().hardness()/vanillaBlockHardness) : 1;
 
