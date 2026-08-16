@@ -64,7 +64,7 @@ public class CustomToolImpl implements CustomTool {
 
         meta.displayName(type.name());
         meta.lore(type.lore());
-        meta.setUnbreakable(unbreakable);
+        meta.setUnbreakable(true);
 
         if (meta instanceof Damageable damageable) {
             short maxDurability = item.getType().getMaxDurability();

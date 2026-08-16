@@ -56,10 +56,14 @@ public interface CustomTool {
     void durability(int durability);
 
     /**
-     * Decreases the durability of this CustomTool by a given amount
+     * Decreases the durability of this CustomTool by a given amount, if the item is not unbreakable.
+     * For decreasing the durability of an unbreakable item, use {@link CustomTool#durability(int)} instead.
+     * @throws IllegalArgumentException if the amount is negative
      * @param amount the amount
      */
     default void damage(int amount) {
+        if (amount < 0) throw new IllegalArgumentException("Amount must be positive");
+        if (unbreakable()) return;
         durability(durability() - amount);
     }
 
@@ -72,9 +76,11 @@ public interface CustomTool {
 
     /**
      * Increases the durability of this CustomTool by a given amount
+     * @throws IllegalArgumentException if the amount is negative
      * @param amount the amount
      */
     default void repair(int amount) {
+        if (amount < 0) throw new IllegalArgumentException("Amount must be positive");
         durability(durability() + amount);
     }
 
