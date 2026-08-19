@@ -136,8 +136,8 @@ public record CustomToolTypeImpl(
             if (name == null) throw new IllegalArgumentException("Name cannot be null");
             if (material == null || material == Material.AIR) throw new IllegalArgumentException("Material cannot be null or AIR");
             if (maxDurability == -1) maxDurability = material.getMaxDurability();
-            if (maxDurability < 0) throw new IllegalArgumentException("Max durability cannot be negative");
-            if (miningLevel < 1) throw new IllegalArgumentException("Mining level must be greater than 0");
+            if (maxDurability < 1) throw new IllegalArgumentException("Max durability must be greater than 0");
+            if (miningLevel < 0) throw new IllegalArgumentException("Mining level cannot be negative");
             if (speed < 0) throw new IllegalArgumentException("Speed cannot be negative");
             return new CustomToolTypeImpl(
                     name,
