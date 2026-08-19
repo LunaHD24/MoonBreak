@@ -40,12 +40,12 @@ public record CustomToolTypeImpl(
         @Override
         public Builder copyFrom(CustomToolType type) {
             name = type.name();
-            lore = type.lore();
+            lore = new ArrayList<>(type.lore());
             material = type.material();
             maxDurability = type.maxDurability();
             miningLevel = type.miningLevel();
             speed = type.speed();
-            correctToolFor = type.correctToolFor();
+            correctToolFor = new ArrayList<>(type.correctToolFor());
             includeVanillaMineables = type.includeVanillaMineables();
             affectedByWrongTool = type.affectedByWrongTool();
             affectedByUnderwater = type.affectedByUnderwater();
