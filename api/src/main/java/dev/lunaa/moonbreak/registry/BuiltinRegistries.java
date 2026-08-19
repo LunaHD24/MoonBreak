@@ -9,7 +9,7 @@ import dev.lunaa.moonbreak.tool.CustomToolType;
  */
 public final class BuiltinRegistries {
 
-    public static final ResourceRegistry<CustomBlockType> BLOCK_TYPE = MoonBreakApi.resourceRegistry();
-    public static final ResourceRegistry<CustomToolType> TOOL_TYPE = MoonBreakApi.resourceRegistry();
+    public static final ResourceRegistry<CustomBlockType> BLOCK_TYPE = MoonBreakApi.newResourceRegistry();
+    public static final ResourceRegistry<CustomToolType> TOOL_TYPE = MoonBreakApi.newResourceRegistry();
 
 }

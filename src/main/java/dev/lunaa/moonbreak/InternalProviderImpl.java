@@ -5,6 +5,7 @@ import dev.lunaa.moonbreak.block.CustomBlockImpl;
 import dev.lunaa.moonbreak.block.CustomBlockType;
 import dev.lunaa.moonbreak.block.CustomBlockTypeImpl;
 import dev.lunaa.moonbreak.registry.ResourceRegistry;
+import dev.lunaa.moonbreak.registry.ResourceRegistryImpl;
 import dev.lunaa.moonbreak.tool.CustomTool;
 import dev.lunaa.moonbreak.tool.CustomToolImpl;
 import dev.lunaa.moonbreak.tool.CustomToolType;
@@ -15,7 +16,12 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Optional;
 
-public record InternalProviderImpl(ResourceRegistry resourceRegistry) implements InternalProvider {
+public class InternalProviderImpl implements InternalProvider {
+
+    @Override
+    public ResourceRegistry newResourceRegistry() {
+        return new ResourceRegistryImpl<>();
+    }
 
     @Override
     public CustomToolType.Builder toolTypeBuilder() {

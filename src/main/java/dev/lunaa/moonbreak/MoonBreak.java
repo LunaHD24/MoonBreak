@@ -23,7 +23,6 @@ public final class MoonBreak extends JavaPlugin {
 
     private static @MonotonicNonNull MoonBreak instance;
     private @MonotonicNonNull static Logger logger;
-    private @MonotonicNonNull ResourceRegistryImpl<Registrable> resourceRegistry;
     private @MonotonicNonNull InternalProviderImpl internalProvider;
     private @MonotonicNonNull CustomBlockManager blockManager;
     private @MonotonicNonNull CustomBlockLoader blockLoader;
@@ -77,8 +76,7 @@ public final class MoonBreak extends JavaPlugin {
     }
 
     private void initializeFields() {
-        resourceRegistry = new ResourceRegistryImpl<>();
-        internalProvider = new InternalProviderImpl(resourceRegistry);
+        internalProvider = new InternalProviderImpl();
         blockManager = new CustomBlockManager();
         blockLoader = new CustomBlockLoader(blockManager);
         breakingService = new BreakingService();
@@ -99,10 +97,6 @@ public final class MoonBreak extends JavaPlugin {
 
     public double previousBaseBlockBreakSpeed(Player player) {
         return previousBaseBlockBreakSpeeds.get(player.getUniqueId());
-    }
-
-    public ResourceRegistryImpl<Registrable> resourceRegistry() {
-        return resourceRegistry;
     }
 
     public CustomBlockManager blockManager() {

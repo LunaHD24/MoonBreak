@@ -15,7 +15,7 @@ import java.util.Optional;
 @ApiStatus.Internal
 public interface InternalProvider {
 
-    ResourceRegistry resourceRegistry();
+    ResourceRegistry newResourceRegistry();
 
     CustomToolType.Builder toolTypeBuilder();
 

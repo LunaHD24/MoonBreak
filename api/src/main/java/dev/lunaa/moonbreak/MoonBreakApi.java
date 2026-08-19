@@ -34,7 +34,7 @@ public final class MoonBreakApi {
      * @return the ResourceRegistry
      * @param <T> resource type to register
      */
-    public static <T extends Registrable> ResourceRegistry<T> resourceRegistry() {
-        return (ResourceRegistry<T>) provider().resourceRegistry();
+    public static <T extends Registrable> ResourceRegistry<T> newResourceRegistry() {
+        return (ResourceRegistry<T>) provider().newResourceRegistry();
     }
 }

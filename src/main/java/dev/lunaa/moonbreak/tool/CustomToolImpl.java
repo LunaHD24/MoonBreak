@@ -35,7 +35,7 @@ public class CustomToolImpl implements CustomTool {
         this.durability = type.maxDurability();
         this.unbreakable = false;
 
-        Optional<Key> optionalId = MoonBreak.instance().resourceRegistry().getKey(type);
+        Optional<Key> optionalId = BuiltinRegistries.TOOL_TYPE.getKey(type);
         optionalId.orElseThrow(() -> new IllegalStateException("Tool type not registered"));
         id = optionalId.get();
     }
