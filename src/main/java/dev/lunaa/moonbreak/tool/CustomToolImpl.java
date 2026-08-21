@@ -148,7 +148,7 @@ public class CustomToolImpl implements CustomTool {
 
     @Override
     public void durability(int durability) {
-        this.durability = durability;
+        this.durability = Math.clamp(durability, 0, type().maxDurability());
         isDirty = true;
     }
 
