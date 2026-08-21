@@ -46,7 +46,7 @@ public class InternalProviderImpl implements InternalProvider {
     @Override
     public CustomBlockType customBlockTypeFactory(Material material, Material copyHardness) {
         if (!CustomBlockTypeImpl.isValidMaterial(copyHardness))
-            throw new IllegalArgumentException("Material is not valid: " + material.name() + ". Must be a solid, non-instaminable block.");
+            throw new IllegalArgumentException("Material is not valid: " + copyHardness.name() + ". Must be a solid, non-instaminable block.");
         return new CustomBlockTypeImpl(material, copyHardness.getHardness());
     }
 

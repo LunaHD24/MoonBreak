@@ -23,6 +23,7 @@ public interface CustomBlockType extends Registrable {
      * Defines a BlockType consisting of a placing material and a block hardness copied from another block
      * @param material the placement material
      * @param copyHardness the material to copy the hardness from
+     * @throws IllegalArgumentException if copyHardness is not a solid, non-instamineable block
      * @return the BlockType
      */
     static CustomBlockType of(Material material, Material copyHardness) {
