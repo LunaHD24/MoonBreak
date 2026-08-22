@@ -81,7 +81,7 @@ public interface CustomToolType extends Registrable {
     float speed();
 
     /**
-     * Returns a collection of all materials which are considered correct for this ToolType,
+     * Returns a collection of all materials that are considered correct for this ToolType,
      * regardless of the actual correct materials for the ToolType's material
      * @return the materials considered correct for this ToolType
      */
@@ -89,7 +89,7 @@ public interface CustomToolType extends Registrable {
 
     /**
      * Returns if this ToolType includes the vanilla "mineable/" tags whose materials will be considered as correct for this ToolType.
-     * E.g. if the material of this ToolType is any type of axe, it will include the tag "mineable/axe", meaning
+     * E.g., if the material of this ToolType is any type of axe, it will include the tag "mineable/axe", meaning
      * all wood types will be considered correct for this ToolType.
      * @return if vanilla "mineable/" tag materials are considered correct for this ToolType
      */
@@ -202,7 +202,7 @@ public interface CustomToolType extends Registrable {
         Builder correctToolFor(Collection<Material> materials);
 
         /**
-         * Sets if the vanilla "mineable/" tags should be considered correct by this ToolType. See {@link CustomToolType#includeVanillaMineables()}
+         * Sets if the vanilla "mineable/" tags are considered correct by this ToolType. See {@link CustomToolType#includeVanillaMineables()}
          *
          * @param includeVanillaMineables if the "mineable/" tags should be considered correct
          * @return the builder

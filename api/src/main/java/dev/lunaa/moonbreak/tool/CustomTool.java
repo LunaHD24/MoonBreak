@@ -66,7 +66,7 @@ public interface CustomTool {
     void durability(int durability);
 
     /**
-     * Decreases the durability of this CustomTool by a given amount, if the item is not unbreakable.
+     * Decreases the durability of this CustomTool by a given amount if the item is not unbreakable.
      * For decreasing the durability of an unbreakable item, use {@link CustomTool#durability(int)} instead.
      * @throws IllegalArgumentException if the amount is negative
      * @param amount the amount

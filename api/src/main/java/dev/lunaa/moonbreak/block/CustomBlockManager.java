@@ -49,7 +49,7 @@ public interface CustomBlockManager {
 
     /**
      * Returns if a block of a given type is placed at the given location.
-     * @param location the lcoation
+     * @param location the location
      * @param type the type
      * @return if a block of the given type is placed
      */
