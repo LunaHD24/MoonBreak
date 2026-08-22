@@ -4,12 +4,14 @@ import dev.lunaa.moonbreak.MoonBreak;
 import org.bukkit.Location;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.Optional;
 
 public class CustomBlockImpl implements CustomBlock {
 
     private CustomBlockType type;
-    private @Nullable Location location;
+    private @Nullable Location actualLocation;
+    private @Nullable Location newLocation;
     private boolean isPlaced = false;
 
     public CustomBlockImpl(CustomBlockType type) {
@@ -18,7 +20,12 @@ public class CustomBlockImpl implements CustomBlock {
 
     public CustomBlockImpl(CustomBlockType type, Location location) {
         this(type);
-        this.location = location.clone();
+        this.actualLocation = location.clone();
+        this.newLocation = actualLocation.clone();
+    }
+
+    protected void setPlaced(boolean placed) {
+        this.isPlaced = placed;
     }
 
     @Override
@@ -34,12 +41,12 @@ public class CustomBlockImpl implements CustomBlock {
 
     @Override
     public Optional<Location> location() {
-        return location == null ? Optional.empty() : Optional.of(location.clone());
+        return newLocation == null ? Optional.empty() : Optional.of(newLocation.clone());
     }
 
     @Override
     public void location(Location location) {
-        this.location = location.clone();
+        this.newLocation = location.clone();
         update();
     }
 
@@ -50,16 +57,25 @@ public class CustomBlockImpl implements CustomBlock {
 
     @Override
     public void placeInWorld() {
-        if (location == null) throw new IllegalStateException("Location cannot be null");
+        if (actualLocation == null) throw new IllegalStateException("Location cannot be null");
         MoonBreak.instance().blockManager().place(this);
         isPlaced = true;
     }
 
     @Override
-    public void update() {
-        if (location == null) throw new IllegalStateException("Location cannot be null");
+    public void removeFromWorld(boolean setAir) {
         if (!isPlaced) return;
-        MoonBreak.instance().blockManager().remove(location, true);
+        MoonBreak.instance().blockManager().removeIfPlaced(this, setAir);
+    }
+
+    @Override
+    public void update() {
+        if (!isPlaced) {
+            if (newLocation != null) actualLocation = newLocation.clone();
+            return;
+        }
+        if (newLocation != null) actualLocation = newLocation.clone();
+        MoonBreak.instance().blockManager().remove(Objects.requireNonNull(actualLocation).clone(),  true);
         placeInWorld();
     }
 }

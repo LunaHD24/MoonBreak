@@ -49,7 +49,7 @@ public interface CustomBlock {
 
     /**
      * Sets the new location of this CustomBlock and updates the location in-world,
-     * if this CustomBlock has been placed (see {@link isPlaced()}).
+     * if this CustomBlock has been placed (see {@link CustomBlock#isPlaced()}).
      * @param location the location
      */
     void location(Location location);
@@ -67,7 +67,13 @@ public interface CustomBlock {
     void placeInWorld();
 
     /**
-     * Updates the in-world location of this CustomBlock if it has been placed (see {@link CustomBlock#isPlaced()})
+     * Removes this CustomBlock from the world if it has been placed (see {@link CustomBlock#isPlaced()})
+     */
+    void removeFromWorld(boolean setAir);
+
+    /**
+     * Updates the in-world location and material of this CustomBlock if it has been placed (see {@link CustomBlock#isPlaced()}).
+     * This is performed automatically after modifying relevant data of this CustomBlock (location or type).
      */
     void update();
 }

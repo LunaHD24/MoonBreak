@@ -13,6 +13,9 @@ import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Optional;
 
+/**
+ * Provides necessary data from the plugin to the API. Usage of any fields or methods is highly discouraged.
+ */
 @ApiStatus.Internal
 public interface InternalProvider {
 

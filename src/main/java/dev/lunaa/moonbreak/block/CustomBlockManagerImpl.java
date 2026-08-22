@@ -16,7 +16,7 @@ public class CustomBlockManagerImpl implements CustomBlockManager{
 
     @Override
     public void place(CustomBlock block) {
-        Location location = stripLocation(block.location().orElseThrow());
+        Location location = stripLocation(block.location().orElseThrow(() -> new IllegalStateException("Location cannot be null")));
         long chunkKey = location.getChunk().getChunkKey();
         HashMap<Location, CustomBlockType> blocks = placedBlocks.get(chunkKey);
 
@@ -26,6 +26,9 @@ public class CustomBlockManagerImpl implements CustomBlockManager{
 
         location.getBlock().setType(block.type().material());
         blocks.put(location, block.type());
+
+        CustomBlockImpl impl = (CustomBlockImpl) block;
+        impl.setPlaced(true);
     }
 
     @Override
@@ -35,7 +38,9 @@ public class CustomBlockManagerImpl implements CustomBlockManager{
         if (setAir) location.getBlock().setType(Material.AIR);
 
         long chunkKey = location.getChunk().getChunkKey();
-        placedBlocks.get(chunkKey).remove(location);
+        CustomBlockImpl impl = (CustomBlockImpl) placedBlocks.get(chunkKey).get(location);
+        if (impl == null) return;
+        impl.setPlaced(false);
     }
 
     @Override
