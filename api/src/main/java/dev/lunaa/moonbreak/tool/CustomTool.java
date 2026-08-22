@@ -1,6 +1,7 @@
 package dev.lunaa.moonbreak.tool;
 
 import dev.lunaa.moonbreak.MoonBreakApi;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Optional;
@@ -19,6 +20,15 @@ public interface CustomTool {
      */
     static CustomTool of(CustomToolType type) {
         return MoonBreakApi.provider().toolOfType(type);
+    }
+
+    /**
+     * Creates a new CustomTool instance from a {@link Player}'s mainhand if the item is a tool.
+     * @param player the player
+     * @return the CustomTool if it is one
+     */
+    static Optional<CustomTool> fromPlayer(Player player) {
+        return MoonBreakApi.provider().toolFromPlayer(player);
     }
 
     /**

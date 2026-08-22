@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -38,6 +39,12 @@ public class CustomToolImpl implements CustomTool {
         Optional<Key> optionalId = BuiltinRegistries.TOOL_TYPE.getKey(type);
         optionalId.orElseThrow(() -> new IllegalStateException("Tool type not registered"));
         id = optionalId.get();
+    }
+
+    public static Optional<CustomTool> fromPlayer(Player player) {
+        ItemStack item = player.getInventory().getItemInMainHand();
+        if (item.getType() == Material.AIR) return Optional.empty();
+        return from(item);
     }
 
     public static Optional<CustomTool> from(ItemStack item) {

@@ -8,6 +8,7 @@ import dev.lunaa.moonbreak.tool.CustomTool;
 import dev.lunaa.moonbreak.tool.CustomToolType;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -24,6 +25,8 @@ public interface InternalProvider {
     CustomToolType.Builder toolTypeBuilder();
 
     CustomTool toolOfType(CustomToolType type);
+
+    Optional<CustomTool> toolFromPlayer(Player player);
 
     Optional<CustomTool> toolFromItem(ItemStack item);
 

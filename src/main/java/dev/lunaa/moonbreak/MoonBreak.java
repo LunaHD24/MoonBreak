@@ -64,6 +64,14 @@ public final class MoonBreak extends JavaPlugin {
         pm.registerEvents(new PlayerQuitListener(), this);
         pm.registerEvents(new PlayerMoveListener(), this);
         pm.registerEvents(new PlayerBreakBlockListener(), this);
+        pm.registerEvents(new PlayerInteractListener(), this);
+        pm.registerEvents(new PlayerInteractAtEntityListener(), this);
+
+        pm.registerEvents(new BlockDamageListener(), this);
+        pm.registerEvents(new BlockBreakProgressUpdateListener(), this);
+        pm.registerEvents(new BlockDamageAbortListener(), this);
+
+        pm.registerEvents(new EntityDamageByEntityListener(), this);
 
         pm.registerEvents(new ChunkLoadListener(), this);
         pm.registerEvents(new ChunkUnloadListener(), this);

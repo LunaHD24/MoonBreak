@@ -9,6 +9,7 @@ import dev.lunaa.moonbreak.tool.CustomToolType;
 import dev.lunaa.moonbreak.tool.CustomToolTypeImpl;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Optional;
@@ -28,6 +29,11 @@ public class InternalProviderImpl implements InternalProvider {
     @Override
     public CustomTool toolOfType(CustomToolType type) {
         return new CustomToolImpl(type);
+    }
+
+    @Override
+    public Optional<CustomTool> toolFromPlayer(Player player) {
+        return CustomToolImpl.fromPlayer(player);
     }
 
     @Override

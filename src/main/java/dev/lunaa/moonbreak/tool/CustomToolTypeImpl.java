@@ -36,6 +36,12 @@ public record CustomToolTypeImpl(
         return Optional.ofNullable((BiConsumer<T, CustomTool>) eventHooks.get(eventHook));
     }
 
+    @SuppressWarnings("unchecked")
+    public <T extends Event> void executeHook(EventHook<T> eventHook, T event, CustomTool tool) {
+        if (!eventHooks.containsKey(eventHook)) return;
+        ((BiConsumer<T, CustomTool>)eventHooks.get(eventHook)).accept(event, tool);
+    }
+
     public static class BuilderImpl implements CustomToolType.Builder {
         private @Nullable Component name;
         private List<Component> lore = new ArrayList<>();
