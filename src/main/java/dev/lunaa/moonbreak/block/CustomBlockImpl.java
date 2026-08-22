@@ -10,6 +10,7 @@ public class CustomBlockImpl implements CustomBlock {
 
     private CustomBlockType type;
     private @Nullable Location location;
+    private boolean isPlaced = false;
 
     public CustomBlockImpl(CustomBlockType type) {
         this.type = type;
@@ -44,19 +45,20 @@ public class CustomBlockImpl implements CustomBlock {
 
     @Override
     public boolean isPlaced() {
-        return location != null && MoonBreak.instance().blockManager().isPlaced(location);
+        return isPlaced;
     }
 
     @Override
     public void placeInWorld() {
         if (location == null) throw new IllegalStateException("Location cannot be null");
         MoonBreak.instance().blockManager().place(this);
+        isPlaced = true;
     }
 
     @Override
     public void update() {
         if (location == null) throw new IllegalStateException("Location cannot be null");
-        if (!MoonBreak.instance().blockManager().isPlaced(location)) return;
+        if (!isPlaced) return;
         MoonBreak.instance().blockManager().remove(location, true);
         placeInWorld();
     }

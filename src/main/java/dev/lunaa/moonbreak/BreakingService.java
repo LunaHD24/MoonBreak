@@ -25,7 +25,6 @@ public class BreakingService {
     public void updateBreakSpeeds() {
         updateActivePlayers();
         if (activePlayers.isEmpty()) return;
-        System.out.println("Updating break speeds");
 
         for (UUID uuid : activePlayers.keySet()) {
             Player player = Bukkit.getPlayer(uuid);
@@ -43,7 +42,7 @@ public class BreakingService {
             }
             lastLookedAt.put(player.getUniqueId(), block.getLocation());
 
-            Optional<CustomBlock> optionalCustomBlock = MoonBreak.instance().blockManager().getBlock(block.getLocation());
+            Optional<CustomBlock> optionalCustomBlock = MoonBreak.instance().blockManager().get(block.getLocation());
 
             CustomTool tool = null;
             ItemStack handItem = player.getInventory().getItemInMainHand();
@@ -85,7 +84,6 @@ public class BreakingService {
     }
 
     private void calcBlockBreakSpeed(Player player, @Nullable CustomTool tool, Block block, @Nullable CustomBlock customBlock) {
-        System.out.println("Calculate");
         float vanillaBlockHardness = block.getType().getHardness();
         double breakSpeed = customBlock != null ? 1f/(customBlock.type().hardness()/vanillaBlockHardness) : 1;
 

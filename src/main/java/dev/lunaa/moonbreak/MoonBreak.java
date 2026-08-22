@@ -1,10 +1,8 @@
 package dev.lunaa.moonbreak;
 
 import dev.lunaa.moonbreak.block.CustomBlockLoader;
-import dev.lunaa.moonbreak.block.CustomBlockManager;
+import dev.lunaa.moonbreak.block.CustomBlockManagerImpl;
 import dev.lunaa.moonbreak.listener.*;
-import dev.lunaa.moonbreak.registry.Registrable;
-import dev.lunaa.moonbreak.registry.ResourceRegistryImpl;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
@@ -24,7 +22,7 @@ public final class MoonBreak extends JavaPlugin {
     private static @MonotonicNonNull MoonBreak instance;
     private @MonotonicNonNull static Logger logger;
     private @MonotonicNonNull InternalProviderImpl internalProvider;
-    private @MonotonicNonNull CustomBlockManager blockManager;
+    private @MonotonicNonNull CustomBlockManagerImpl blockManager;
     private @MonotonicNonNull CustomBlockLoader blockLoader;
     private @MonotonicNonNull BreakingService breakingService;
 
@@ -77,7 +75,7 @@ public final class MoonBreak extends JavaPlugin {
 
     private void initializeFields() {
         internalProvider = new InternalProviderImpl();
-        blockManager = new CustomBlockManager();
+        blockManager = new CustomBlockManagerImpl();
         blockLoader = new CustomBlockLoader(blockManager);
         breakingService = new BreakingService();
     }
@@ -99,7 +97,7 @@ public final class MoonBreak extends JavaPlugin {
         return previousBaseBlockBreakSpeeds.get(player.getUniqueId());
     }
 
-    public CustomBlockManager blockManager() {
+    public CustomBlockManagerImpl blockManager() {
         return blockManager;
     }
 

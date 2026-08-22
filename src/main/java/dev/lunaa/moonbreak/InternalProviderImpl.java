@@ -1,9 +1,6 @@
 package dev.lunaa.moonbreak;
 
-import dev.lunaa.moonbreak.block.CustomBlock;
-import dev.lunaa.moonbreak.block.CustomBlockImpl;
-import dev.lunaa.moonbreak.block.CustomBlockType;
-import dev.lunaa.moonbreak.block.CustomBlockTypeImpl;
+import dev.lunaa.moonbreak.block.*;
 import dev.lunaa.moonbreak.registry.ResourceRegistry;
 import dev.lunaa.moonbreak.registry.ResourceRegistryImpl;
 import dev.lunaa.moonbreak.tool.CustomTool;
@@ -58,6 +55,11 @@ public class InternalProviderImpl implements InternalProvider {
     @Override
     public CustomBlock blockOfType(CustomBlockType type, Location location) {
         return new CustomBlockImpl(type, location);
+    }
+
+    @Override
+    public CustomBlockManager blockManager() {
+        return MoonBreak.instance().blockManager();
     }
 
 }

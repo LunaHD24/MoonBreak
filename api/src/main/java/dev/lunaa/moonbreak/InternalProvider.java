@@ -1,6 +1,7 @@
 package dev.lunaa.moonbreak;
 
 import dev.lunaa.moonbreak.block.CustomBlock;
+import dev.lunaa.moonbreak.block.CustomBlockManager;
 import dev.lunaa.moonbreak.block.CustomBlockType;
 import dev.lunaa.moonbreak.registry.ResourceRegistry;
 import dev.lunaa.moonbreak.tool.CustomTool;
@@ -30,4 +31,6 @@ public interface InternalProvider {
     CustomBlock blockOfType(CustomBlockType type);
 
     CustomBlock blockOfType(CustomBlockType type, Location location);
+
+    CustomBlockManager blockManager();
 }

@@ -1,7 +1,7 @@
 package dev.lunaa.moonbreak.listener;
 
 import dev.lunaa.moonbreak.MoonBreak;
-import dev.lunaa.moonbreak.block.CustomBlockManager;
+import dev.lunaa.moonbreak.block.CustomBlockManagerImpl;
 import dev.lunaa.moonbreak.tool.CustomTool;
 import dev.lunaa.moonbreak.tool.CustomToolImpl;
 import org.bukkit.Location;
@@ -21,7 +21,7 @@ public class PlayerBreakBlockListener implements Listener {
     public void onPlayerBreakBlock(BlockBreakEvent e) {
         if (e.isCancelled()) return;
 
-        CustomBlockManager blockManager = MoonBreak.instance().blockManager();
+        CustomBlockManagerImpl blockManager = MoonBreak.instance().blockManager();
         Location blockLocation = e.getBlock().getLocation();
         if (blockManager.isPlaced(blockLocation)) blockManager.remove(blockLocation, false);
 

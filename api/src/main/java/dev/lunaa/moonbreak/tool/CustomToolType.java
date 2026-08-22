@@ -5,6 +5,7 @@ import dev.lunaa.moonbreak.registry.Registrable;
 import io.papermc.paper.event.block.BlockBreakProgressUpdateEvent;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
+import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageAbortEvent;
 import org.bukkit.event.block.BlockDamageEvent;
@@ -16,6 +17,8 @@ import org.jspecify.annotations.NullMarked;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 
 /**
@@ -109,6 +112,10 @@ public interface CustomToolType extends Registrable {
      * @return if the tool speed is affected
      */
     boolean affectedByFloating();
+
+    Map<EventHook<? extends Event>, BiConsumer<? extends Event, CustomTool>> eventHooks();
+
+    <T extends Event> Optional<BiConsumer<T, CustomTool>> hook(EventHook<T> eventHook);
 
     /**
      * Represents a builder used to create new ToolTypes
@@ -226,13 +233,6 @@ public interface CustomToolType extends Registrable {
          */
         Builder affectedByFloating(boolean affected);
 
-        /*
-        interface Builder {
-
-        Builder material(Material material);
-
-        Builder hardness(float hardness);
-
         Builder onBlockDamage(BiConsumer<BlockDamageEvent, CustomTool> action);
 
         Builder onBlockDamageUpdate(BiConsumer<BlockBreakProgressUpdateEvent, CustomTool> action);
@@ -247,11 +247,7 @@ public interface CustomToolType extends Registrable {
 
         Builder onInteractAtEntity(BiConsumer<PlayerInteractAtEntityEvent, CustomTool> action);
 
-        Builder onEntityDamage(BiConsumer<EntityDamageByEntityEvent, CustomTool> action);
-
-        CustomBlockType build();
-    }
-         */
+        Builder onEntityDamageByEntity(BiConsumer<EntityDamageByEntityEvent, CustomTool> action);
 
         /**
          * Builds the ToolType
@@ -304,6 +300,24 @@ public interface CustomToolType extends Registrable {
 
         public float miningSpeed() {
             return miningSpeed;
+        }
+    }
+
+    class EventHook<T extends Event> {
+
+        public static final EventHook<BlockDamageEvent> BLOCK_DAMAGE = new EventHook<>(BlockDamageEvent.class);
+        public static final EventHook<BlockBreakProgressUpdateEvent> BLOCK_DAMAGE_UPDATE = new EventHook<>(BlockBreakProgressUpdateEvent.class);
+        public static final EventHook<BlockDamageAbortEvent> BLOCK_DAMAGE_ABORT = new EventHook<>(BlockDamageAbortEvent.class);
+        public static final EventHook<BlockBreakEvent> PRE_BLOCK_BREAK = new EventHook<>(BlockBreakEvent.class);
+        public static final EventHook<BlockBreakEvent> POST_BLOCK_BREAK = new EventHook<>(BlockBreakEvent.class);
+        public static final EventHook<PlayerInteractEvent> INTERACT = new EventHook<>(PlayerInteractEvent.class);
+        public static final EventHook<PlayerInteractAtEntityEvent> INTERACT_AT_ENTITY = new EventHook<>(PlayerInteractAtEntityEvent.class);
+        public static final EventHook<EntityDamageByEntityEvent> ENTITY_DAMAGE_BY_ENTITY = new EventHook<>(EntityDamageByEntityEvent.class);
+
+        private final Class<T> eventClass;
+
+        private EventHook(Class<T> eventClass) {
+            this.eventClass = eventClass;
         }
     }
 }

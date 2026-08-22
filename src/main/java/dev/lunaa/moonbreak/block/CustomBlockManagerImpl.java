@@ -6,7 +6,7 @@ import org.bukkit.Material;
 import java.util.HashMap;
 import java.util.Optional;
 
-public class CustomBlockManager {
+public class CustomBlockManagerImpl implements CustomBlockManager{
 
     private final HashMap<Long, HashMap<Location, CustomBlockType>> placedBlocks = new HashMap<>();
 
@@ -14,7 +14,8 @@ public class CustomBlockManager {
         return placedBlocks;
     }
 
-    public void place(CustomBlockImpl block) {
+    @Override
+    public void place(CustomBlock block) {
         Location location = stripLocation(block.location().orElseThrow());
         long chunkKey = location.getChunk().getChunkKey();
         HashMap<Location, CustomBlockType> blocks = placedBlocks.get(chunkKey);
@@ -27,6 +28,7 @@ public class CustomBlockManager {
         blocks.put(location, block.type());
     }
 
+    @Override
     public void remove(Location location, boolean setAir) {
         location = stripLocation(location);
         if (!isPlaced(location)) return;
@@ -36,13 +38,30 @@ public class CustomBlockManager {
         placedBlocks.get(chunkKey).remove(location);
     }
 
+    @Override
+    public boolean removeIfPlaced(CustomBlock block, boolean setAir) {
+        if (!block.isPlaced()) return false;
+        remove(block.location().orElseThrow(), setAir);
+        return true;
+    }
+
+    @Override
     public boolean isPlaced(Location location) {
         location = stripLocation(location);
         long chunkKey = location.getChunk().getChunkKey();
         return placedBlocks.get(chunkKey).containsKey(location);
     }
 
-    public Optional<CustomBlock> getBlock(Location location) {
+    @Override
+    public boolean isPlaced(Location location, CustomBlockType type) {
+        location = stripLocation(location);
+        long chunkKey = location.getChunk().getChunkKey();
+        if (!placedBlocks.get(chunkKey).containsKey(location)) return false;
+        return placedBlocks.get(chunkKey).get(location) == type;
+    }
+
+    @Override
+    public Optional<CustomBlock> get(Location location) {
         location = stripLocation(location);
         HashMap<Location, CustomBlockType> blocks = placedBlocks.get(location.getChunk().getChunkKey());
         if (blocks.containsKey(location)) return Optional.empty();

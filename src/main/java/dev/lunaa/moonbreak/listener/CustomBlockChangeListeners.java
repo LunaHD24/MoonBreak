@@ -3,7 +3,7 @@ package dev.lunaa.moonbreak.listener;
 import com.destroystokyo.paper.event.block.BlockDestroyEvent;
 import dev.lunaa.moonbreak.MoonBreak;
 import dev.lunaa.moonbreak.block.CustomBlock;
-import dev.lunaa.moonbreak.block.CustomBlockManager;
+import dev.lunaa.moonbreak.block.CustomBlockManagerImpl;
 import io.papermc.paper.event.block.BlockBreakBlockEvent;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
@@ -16,9 +16,9 @@ import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 public class CustomBlockChangeListeners implements Listener {
 
-    public static @MonotonicNonNull CustomBlockManager blockManager;
+    public static @MonotonicNonNull CustomBlockManagerImpl blockManager;
 
-    public static void init(CustomBlockManager blockManager) {
+    public static void init(CustomBlockManagerImpl blockManager) {
         CustomBlockChangeListeners.blockManager = blockManager;
     }
 
@@ -99,7 +99,7 @@ public class CustomBlockChangeListeners implements Listener {
         Location location = e.getBlock().getLocation();
         if (!blockManager.isPlaced(location)) return;
 
-        CustomBlock customBlock = blockManager.getBlock(location).orElseThrow();
+        CustomBlock customBlock = blockManager.get(location).orElseThrow();
         customBlock.location(e.getToBlock().getLocation());
     }
 
@@ -109,7 +109,7 @@ public class CustomBlockChangeListeners implements Listener {
             Location location = block.getLocation().clone();
             if (!blockManager.isPlaced(location)) return;
 
-            CustomBlock customBlock = blockManager.getBlock(location).orElseThrow();
+            CustomBlock customBlock = blockManager.get(location).orElseThrow();
             customBlock.location(location.add(e.getDirection().getDirection()));
         });
     }
@@ -120,7 +120,7 @@ public class CustomBlockChangeListeners implements Listener {
             Location location = block.getLocation().clone();
             if (!blockManager.isPlaced(location)) return;
 
-            CustomBlock customBlock = blockManager.getBlock(location).orElseThrow();
+            CustomBlock customBlock = blockManager.get(location).orElseThrow();
             customBlock.location(location.add(e.getDirection().getOppositeFace().getDirection()));
         });
     }

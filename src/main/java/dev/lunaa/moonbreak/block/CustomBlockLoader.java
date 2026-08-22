@@ -29,9 +29,9 @@ public class CustomBlockLoader {
     private int chunkIndexLoadRetries = 2;
     private boolean deletionInProgress = false;
 
-    private final CustomBlockManager blockManager;
+    private final CustomBlockManagerImpl blockManager;
 
-    public CustomBlockLoader(CustomBlockManager blockManager) {
+    public CustomBlockLoader(CustomBlockManagerImpl blockManager) {
         this.blockManager = blockManager;
     }
 
