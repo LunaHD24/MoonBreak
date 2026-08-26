@@ -71,7 +71,7 @@ public class CustomToolImpl implements CustomTool {
 
         meta.displayName(type.name());
         meta.lore(type.lore());
-        meta.setUnbreakable(true);
+        meta.setUnbreakable(unbreakable);
 
         if (meta instanceof Damageable damageable) {
             short maxDurability = item.getType().getMaxDurability();
@@ -129,8 +129,9 @@ public class CustomToolImpl implements CustomTool {
             }
         }
 
-        if (!type.includeVanillaMineables()) return toolComponent;
+        if (!type.includeVanillaMineables() || !material.name().endsWith("PICKAXE")) return toolComponent;
 
+        // TODO: Set up for all tools - in some version (soon hopefully)
         Optional<VanillaTool> optionalVanillaTool = Arrays.stream(VanillaTool.values())
                 .filter(vanillaTool -> material.name().endsWith(vanillaTool.name()))
                 .findFirst();
@@ -174,6 +175,8 @@ public class CustomToolImpl implements CustomTool {
         PICKAXE,
         AXE,
         SHOVEL,
-        HOE
+        HOE,
+        SWORD,
+        SHEARS
     }
 }

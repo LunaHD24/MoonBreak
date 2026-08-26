@@ -65,11 +65,11 @@ public interface CustomToolType extends Registrable {
      * If the mining level of the tool is lower than the mining level of the block being mined,
      * the block will not drop anything.
      * 0-4 represent the vanilla values, which are as follows:<br>
-     * 0: Wood, Gold<br>
-     * 1: Stone, Copper<br>
-     * 2: Iron<br>
-     * 3: Diamond<br>
-     * 4: Netherite
+     * - 0: Wood, Gold<br>
+     * - 1: Stone, Copper<br>
+     * - 2: Iron<br>
+     * - 3: Diamond<br>
+     * - 4: Netherite
      * @return the mining level
      */
     int miningLevel();
@@ -89,11 +89,19 @@ public interface CustomToolType extends Registrable {
 
     /**
      * Returns if this ToolType includes the vanilla "mineable/" tags whose materials will be considered as correct for this ToolType.
-     * E.g., if the material of this ToolType is any type of axe, it will include the tag "mineable/axe", meaning
-     * all wood types will be considered correct for this ToolType.
+     * E.g., if the material of this ToolType is a pickaxe, it will include the tag "mineable/pickaxe", meaning
+     * all íncluded entries in that tag, will now be considered correct for this ToolType.
+     * Will be overwritten with the default speed set for this ToolType if not disabled, see {@link CustomToolType#overwriteVanillaMineables()}.
      * @return if vanilla "mineable/" tag materials are considered correct for this ToolType
      */
     boolean includeVanillaMineables();
+
+    /**
+     * Returns if the tags set by {@link CustomToolType#includeVanillaMineables()} will be
+     * overwritten by the default speed for this ToolType.
+     * @return if they will be overwritten
+     */
+    boolean overwriteVanillaMineables();
 
     /**
      * Returns if this ToolType decreases its tool speed when the ToolType is not correct for the block
@@ -113,8 +121,18 @@ public interface CustomToolType extends Registrable {
      */
     boolean affectedByFloating();
 
+    /**
+     * Returns a map of all event hooks, if any are set or an empty one.
+     * @return the map of event hooks or an empty one if none are set
+     */
     Map<EventHook<? extends Event>, BiConsumer<? extends Event, CustomTool>> eventHooks();
 
+    /**
+     * Returns the event action for the specific hook.
+     * @param eventHook the hook
+     * @return the event action
+     * @param <T> the event
+     */
     <T extends Event> Optional<BiConsumer<T, CustomTool>> hook(EventHook<T> eventHook);
 
     /**
@@ -138,8 +156,7 @@ public interface CustomToolType extends Registrable {
         Builder name(Component name);
 
         /**
-         * Sets the displayed lore of this ToolType. Default formatting applies.
-         *
+         * Sets the displayed lore of this ToolType. Default formatting applies.<br>
          * @param lore the displayed lore
          * @return the builder
          */
@@ -154,40 +171,40 @@ public interface CustomToolType extends Registrable {
         Builder material(Material material);
 
         /**
-         * Sets the maximum durability this ToolType can have
-         *
+         * Sets the maximum durability this ToolType can have.<br>
+         * Defaults to the materials maximum durability or throws if non-existent.
          * @param maxDurability the maximum durability
          * @return the builder
          */
         Builder maxDurability(int maxDurability);
 
         /**
-         * Sets the mining level for this ToolType. See {@link CustomToolType#miningLevel()}
-         *
+         * Sets the mining level for this ToolType. See {@link CustomToolType#miningLevel()}.<br>
+         * Defaults to 0 (wooden).
          * @param miningLevel the mining level
          * @return the builder
          */
         Builder miningLevel(int miningLevel);
 
         /**
-         * Sets the mining level for this ToolType based on a vanilla material
-         *
+         * Sets the mining level for this ToolType based on a vanilla material.<br>
+         * Defaults to 0 (wooden).
          * @param miningLevel the mining level
          * @return the builder
          */
         Builder miningLevel(MiningLevel miningLevel);
 
         /**
-         * Sets the mining speed for this ToolType. See {@link CustomToolType#speed()}
-         *
+         * Sets the mining speed for this ToolType. See {@link CustomToolType#speed()}.<br>
+         * Defaults to the materials default mining speed or throws if non-existent.
          * @param speed the mining speed
          * @return the builder
          */
         Builder speed(float speed);
 
         /**
-         * Sets the mining speed for this ToolType based on a vanilla material
-         *
+         * Sets the mining speed for this ToolType based on a vanilla material.<br>
+         * Defaults to the materials default mining speed or throws if non-existent.
          * @param speed the mining speed
          * @return the builder
          */
@@ -202,52 +219,53 @@ public interface CustomToolType extends Registrable {
         Builder correctToolFor(Collection<Material> materials);
 
         /**
-         * Sets if the vanilla "mineable/" tags are considered correct by this ToolType. See {@link CustomToolType#includeVanillaMineables()}
-         *
+         * Sets if the vanilla "mineable/" tags are considered correct by this ToolType. See {@link CustomToolType#includeVanillaMineables()}<br>
+         * Defaults to {@code true}. Currently only affects pickaxes. Vanilla functionality of other tools is not guaranteed.
          * @param includeVanillaMineables if the "mineable/" tags should be considered correct
          * @return the builder
          */
         Builder includeVanillaMineables(boolean includeVanillaMineables);
 
+        /** Sets if the tags potentially set by {@link Builder#includeVanillaMineables()} should be
+         * overwritten by the default speed set for this ToolType. See {@link CustomToolType#overwriteVanillaMineables()}.<br>
+         * Defaults to {@code true}. Currently only affects pickaxes. Vanilla functionality of other tools is not guaranteed.
+         * @param overwriteVanillaMineables if the tags should be overwritten
+         * @return the builder
+         */
+        Builder overwriteVanillaMineables(boolean overwriteVanillaMineables);
+
         /**
-         * Sets if this ToolType is affected by using the wrong tool for a block. See {@link CustomToolType#affectedByWrongTool()}
-         *
+         * Sets if this ToolType is affected by using the wrong tool for a block. See {@link CustomToolType#affectedByWrongTool()}.<br>
+         * Defaults to {@code true}.
          * @param affected if this ToolType is affected
          * @return the builder
          */
         Builder affectedByWrongTool(boolean affected);
 
         /**
-         * Sets if this ToolType is affected by the user being underwater. See {@link CustomToolType#affectedByUnderwater()}
-         *
+         * Sets if this ToolType is affected by the user being underwater. See {@link CustomToolType#affectedByUnderwater()}.<br>
+         * Defaults to {@code true}.
          * @param affected if this ToolType is affected
          * @return the builder
          */
         Builder affectedUnderwater(boolean affected);
 
         /**
-         * Sets if this ToolType is affected by the user floating. See {@link CustomToolType#affectedByFloating()}
-         *
+         * Sets if this ToolType is affected by the user floating. See {@link CustomToolType#affectedByFloating()}.<br>
+         * Defaults to {@code true}.
          * @param affected if this ToolType is affected
          * @return the builder
          */
         Builder affectedByFloating(boolean affected);
 
-        Builder onBlockDamage(BiConsumer<BlockDamageEvent, CustomTool> action);
-
-        Builder onBlockDamageUpdate(BiConsumer<BlockBreakProgressUpdateEvent, CustomTool> action);
-
-        Builder onBlockDamageAbort(BiConsumer<BlockDamageAbortEvent, CustomTool> action);
-
-        Builder onPreBlockBreak(BiConsumer<BlockBreakEvent, CustomTool> action);
-
-        Builder onPostBlockBreak(BiConsumer<BlockBreakEvent, CustomTool> action);
-
-        Builder onInteract(BiConsumer<PlayerInteractEvent, CustomTool> action);
-
-        Builder onInteractAtEntity(BiConsumer<PlayerInteractAtEntityEvent, CustomTool> action);
-
-        Builder onEntityDamageByEntity(BiConsumer<EntityDamageByEntityEvent, CustomTool> action);
+        /**
+         * Adds an action which will be executed accordingly to the specified {@link EventHook}.
+         * @param eventHook the event hook
+         * @param hookAction the action to be executed
+         * @return the builder
+         * @param <T> the event type
+         */
+        <T extends Event> Builder onHook(EventHook<T> eventHook, BiConsumer<T, CustomTool> hookAction);
 
         /**
          * Builds the ToolType
@@ -303,7 +321,11 @@ public interface CustomToolType extends Registrable {
         }
     }
 
-    class EventHook<T extends Event> {
+    /**
+     * Represents specific hooks which can be used to attach a callback action for this tool to a given event.
+     * @param <T> the event type
+     */
+    final class EventHook<T extends Event> {
 
         public static final EventHook<BlockDamageEvent> BLOCK_DAMAGE = new EventHook<>(BlockDamageEvent.class);
         public static final EventHook<BlockBreakProgressUpdateEvent> BLOCK_DAMAGE_UPDATE = new EventHook<>(BlockBreakProgressUpdateEvent.class);
