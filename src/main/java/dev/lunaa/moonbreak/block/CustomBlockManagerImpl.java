@@ -18,7 +18,9 @@ public class CustomBlockManagerImpl implements CustomBlockManager{
     public void place(CustomBlock block) {
         Location location = stripLocation(block.location().orElseThrow(() -> new IllegalStateException("Location cannot be null")));
         long chunkKey = location.getChunk().getChunkKey();
-        HashMap<Location, CustomBlockType> blocks = placedBlocks.get(chunkKey);
+        boolean contains = placedBlocks.containsKey(chunkKey);
+        HashMap<Location, CustomBlockType> blocks = contains ? placedBlocks.get(chunkKey) : new HashMap<>();
+        if (!contains) placedBlocks.put(chunkKey, blocks);
 
         if (blocks.containsKey(location)) {
             throw new IllegalStateException("Tried placing block at an occupied location: " + location);
@@ -54,6 +56,7 @@ public class CustomBlockManagerImpl implements CustomBlockManager{
     public boolean isPlaced(Location location) {
         location = stripLocation(location);
         long chunkKey = location.getChunk().getChunkKey();
+        if (!placedBlocks.containsKey(chunkKey)) return false;
         return placedBlocks.get(chunkKey).containsKey(location);
     }
 
@@ -61,6 +64,7 @@ public class CustomBlockManagerImpl implements CustomBlockManager{
     public boolean isPlaced(Location location, CustomBlockType type) {
         location = stripLocation(location);
         long chunkKey = location.getChunk().getChunkKey();
+        if (!placedBlocks.containsKey(chunkKey)) return false;
         if (!placedBlocks.get(chunkKey).containsKey(location)) return false;
         return placedBlocks.get(chunkKey).get(location) == type;
     }
@@ -68,7 +72,9 @@ public class CustomBlockManagerImpl implements CustomBlockManager{
     @Override
     public Optional<CustomBlock> get(Location location) {
         location = stripLocation(location);
-        HashMap<Location, CustomBlockType> blocks = placedBlocks.get(location.getChunk().getChunkKey());
+        long chunkKey = location.getChunk().getChunkKey();
+        if (!placedBlocks.containsKey(chunkKey)) return Optional.empty();
+        HashMap<Location, CustomBlockType> blocks = placedBlocks.get(chunkKey);
         if (blocks.containsKey(location)) return Optional.empty();
         return Optional.of(new CustomBlockImpl(blocks.get(location)));
     }

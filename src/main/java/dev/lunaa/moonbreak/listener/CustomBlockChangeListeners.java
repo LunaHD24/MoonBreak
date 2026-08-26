@@ -95,15 +95,6 @@ public class CustomBlockChangeListeners implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public void onBlockFromTo(BlockFromToEvent e) {
-        Location location = e.getBlock().getLocation();
-        if (!blockManager.isPlaced(location)) return;
-
-        CustomBlock customBlock = blockManager.get(location).orElseThrow();
-        customBlock.location(e.getToBlock().getLocation());
-    }
-
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPistonExtend(BlockPistonExtendEvent e) {
         e.getBlocks().forEach(block -> {
             Location location = block.getLocation().clone();

@@ -4,10 +4,7 @@ import dev.lunaa.moonbreak.block.CustomBlock;
 import dev.lunaa.moonbreak.tool.CustomTool;
 import dev.lunaa.moonbreak.tool.CustomToolImpl;
 import dev.lunaa.moonbreak.tool.CustomToolType;
-import org.bukkit.Bukkit;
-import org.bukkit.FluidCollisionMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -29,6 +26,10 @@ public class BreakingService {
         for (UUID uuid : activePlayers.keySet()) {
             Player player = Bukkit.getPlayer(uuid);
             if (player == null) continue;
+            if (player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR) {
+                lastLookedAt.remove(uuid);
+                return;
+            }
 
             double range = Objects.requireNonNull(player.getAttribute(Attribute.BLOCK_INTERACTION_RANGE)).getValue();
             Block block = player.getTargetBlockExact((int) Math.ceil(range), FluidCollisionMode.NEVER);
