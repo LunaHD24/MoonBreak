@@ -4,7 +4,10 @@
 - Complete vanilla-like Breaking Simulation
 - Custom Blocks with their own Hardness values
 - Custom Tools with own speeds, durability & more
+- Event Hook Callback Integration for Custom Tools
 - Ability to disable vanilla Behaviors for specific Tools
+- Incredibly lightweight <70KB (API [standalone]: ~12KB; Plugin [includes API]: ~69KB)
+- Low impact on server resources
 
 ## Gradle/Maven Integration
 
@@ -16,7 +19,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("dev.lunaa.moonbreak:moonbreak-api:1.0.0")
+    compileOnly("dev.lunaa.moonbreak:moonbreak-api:1.1.0")
 }
 ```
 Groovy
@@ -28,7 +31,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'dev.lunaa.moonbreak:moonbreak-api:1.0.0'
+    compileOnly 'dev.lunaa.moonbreak:moonbreak-api:1.1.0'
 }
 ```
 
@@ -44,7 +47,7 @@ dependencies {
     <dependency>
         <groupId>dev.lunaa.moonbreak</groupId>
         <artifactId>moonbreak-api</artifactId>
-        <version>1.0.0</version>
+        <version>1.1.0</version>
         <scope>provided</scope>
     </dependency>
 </dependencies>
@@ -57,7 +60,7 @@ dependencies {
 ```java
 CustomToolType HAMMER = CustomToolType.builder()
         .name(Component.text("Hammer"))
-        .material(Material.MACE)
+        .material(Material.IRON_PICKAXE)
         .speed(CustomToolType.MiningSpeed.GOLD)
         .maxDurability(1000)
         .affectedByWrongTool(true)
@@ -86,8 +89,7 @@ private void init() {
 ```
 Placing the block is as simple as:
 ```java
-CustomBlock block = CustomBlock.of(LIGHT_OBSIDIAN, new Location(0, 70, 0));
-block.placeInWorld();
+CustomBlockManager.manager().place(yourLocation, LIGHT_OBSIDIAN);
 ```
 
 ## Documentation & License
