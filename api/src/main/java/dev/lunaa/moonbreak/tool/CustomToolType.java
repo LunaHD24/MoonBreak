@@ -219,15 +219,15 @@ public interface CustomToolType extends Registrable {
         Builder correctToolFor(Collection<Material> materials);
 
         /**
-         * Sets if the vanilla "mineable/" tags are considered correct by this ToolType. See {@link CustomToolType#includeVanillaMineables()}<br>
+         * Sets if the vanilla "mineable/" tags are considered correct by this ToolType. See {@link #includeVanillaMineables()}<br>
          * Defaults to {@code true}. Currently only affects pickaxes. Vanilla functionality of other tools is not guaranteed.
          * @param includeVanillaMineables if the "mineable/" tags should be considered correct
          * @return the builder
          */
         Builder includeVanillaMineables(boolean includeVanillaMineables);
 
-        /** Sets if the tags potentially set by {@link Builder#includeVanillaMineables()} should be
-         * overwritten by the default speed set for this ToolType. See {@link CustomToolType#overwriteVanillaMineables()}.<br>
+        /** Sets if the tags potentially set by {@link #includeVanillaMineables()} should be
+         * overwritten by the default speed set for this ToolType. See {@link #overwriteVanillaMineables()}.<br>
          * Defaults to {@code true}. Currently only affects pickaxes. Vanilla functionality of other tools is not guaranteed.
          * @param overwriteVanillaMineables if the tags should be overwritten
          * @return the builder
@@ -293,6 +293,10 @@ public interface CustomToolType extends Registrable {
             this.miningLevel = miningLevel;
         }
 
+        /**
+         * Returns the mining level of the vanilla material
+         * @return the mining level
+         */
         public int miningLevel() {
             return miningLevel;
         }
@@ -316,6 +320,10 @@ public interface CustomToolType extends Registrable {
             this.miningSpeed = miningSpeed;
         }
 
+        /**
+         * Returns the mining speed of the vanilla material
+         * @return the mining speed
+         */
         public float miningSpeed() {
             return miningSpeed;
         }

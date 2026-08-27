@@ -106,6 +106,10 @@ public final class MoonBreak extends JavaPlugin {
         return previousBaseBlockBreakSpeeds.get(player.getUniqueId());
     }
 
+    public void removePreviousBaseBlockBreakSpeed(Player player) {
+        previousBaseBlockBreakSpeeds.remove(player.getUniqueId());
+    }
+
     public CustomBlockManagerImpl blockManager() {
         return blockManager;
     }

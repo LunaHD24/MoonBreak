@@ -1,5 +1,5 @@
 plugins {
-    id("java-library")
+    id("java")
     id("xyz.jpenilla.run-paper") version "3.0.2"
     id("com.gradleup.shadow") version "9.6.1"
 }
