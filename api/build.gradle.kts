@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "dev.lunaa.moonbreak"
-version = "1.1.0"
+version = rootProject.version
 
 repositories {
     mavenCentral()

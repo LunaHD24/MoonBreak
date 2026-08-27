@@ -11,6 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.PlayerInventory;
 
 import java.util.Optional;
 
@@ -30,12 +31,13 @@ public class PlayerBreakBlockListener implements Listener {
         if (optionalTool.isEmpty()) return;
         CustomTool tool = optionalTool.get();
 
+        PlayerInventory inventory = player.getInventory();
         if (!tool.unbreakable()) tool.damage(1);
         if (tool.broken()) {
             player.broadcastSlotBreak(EquipmentSlot.HAND);
-            player.getInventory().setItemInMainHand(null);
+            inventory.setItemInMainHand(null);
         } else {
-            player.getInventory().setItemInMainHand(tool.itemStack());
+            inventory.setItemInMainHand(tool.itemStack(inventory.getItemInMainHand().getItemMeta()));
         }
 
         executeHook(e, false, tool);

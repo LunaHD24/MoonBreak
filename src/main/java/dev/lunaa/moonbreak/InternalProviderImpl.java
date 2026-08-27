@@ -7,7 +7,6 @@ import dev.lunaa.moonbreak.tool.CustomTool;
 import dev.lunaa.moonbreak.tool.CustomToolImpl;
 import dev.lunaa.moonbreak.tool.CustomToolType;
 import dev.lunaa.moonbreak.tool.CustomToolTypeImpl;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -51,16 +50,6 @@ public class InternalProviderImpl implements InternalProvider {
         if (!CustomBlockTypeImpl.isValidMaterial(copyHardness))
             throw new IllegalArgumentException("Material is not valid: " + copyHardness.name() + ". Must be a solid, non-instaminable block.");
         return new CustomBlockTypeImpl(material, copyHardness.getHardness());
-    }
-
-    @Override
-    public CustomBlock blockOfType(CustomBlockType type) {
-        return new CustomBlockImpl(type);
-    }
-
-    @Override
-    public CustomBlock blockOfType(CustomBlockType type, Location location) {
-        return new CustomBlockImpl(type, location);
     }
 
     @Override

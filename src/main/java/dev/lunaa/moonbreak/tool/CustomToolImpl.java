@@ -14,6 +14,7 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.components.ToolComponent;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -61,13 +62,17 @@ public class CustomToolImpl implements CustomTool {
     }
 
     @Override
-    @SuppressWarnings("UnstableApiUsage")
     public ItemStack itemStack() {
+        if (!isDirty && item != null) return item.clone();
+        return itemStack(null);
+    }
+
+    @Override
+    public ItemStack itemStack(@Nullable ItemMeta baseMeta) {
         if (broken()) return ItemStack.empty();
-        if (!isDirty) return item.clone();
 
         ItemStack item = new ItemStack(type.material());
-        ItemMeta meta = item.getItemMeta();
+        ItemMeta meta = baseMeta == null ? item.getItemMeta() : baseMeta.clone();
 
         meta.displayName(type.name());
         meta.lore(type.lore());
@@ -80,10 +85,10 @@ public class CustomToolImpl implements CustomTool {
             damageable.setDamage(maxDurability - durability);
         }
 
+        ItemProperty.ITEM_ID.set(meta, id);
+        DURABILITY.set(meta, durability);
         meta.setTool(getToolComponent(item.getType(), meta));
         item.setItemMeta(meta);
-        ItemProperty.ITEM_ID.set(item, id);
-        DURABILITY.set(item, durability);
 
         this.item = item;
         isDirty = false;

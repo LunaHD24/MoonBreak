@@ -9,7 +9,10 @@ public class ChunkUnloadListener implements Listener {
 
     @EventHandler
     public void onChunkUnload(ChunkUnloadEvent e) {
-        if (!e.isSaveChunk()) return;
+        if (!e.isSaveChunk()) {
+            MoonBreak.instance().blockManager().getPlacedBlocks().remove(e.getChunk().getChunkKey());
+            return;
+        }
         MoonBreak.instance().blockLoader().unloadChunk(e.getChunk());
     }
 

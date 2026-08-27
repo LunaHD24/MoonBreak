@@ -3,6 +3,8 @@ package dev.lunaa.moonbreak.tool;
 import dev.lunaa.moonbreak.MoonBreakApi;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Optional;
 
@@ -42,10 +44,18 @@ public interface CustomTool {
 
     /**
      * Generates an {@link ItemStack} which this CustomTool represents.<br>
-     * If this CustomTool is broken (see {@link CustomTool#broken()}), this method will always return {@link ItemStack#empty()}.
+     * If this CustomTool is broken (see {@link #broken()}), this method will always return {@link ItemStack#empty()}.
      * @return the itemstack
      */
     ItemStack itemStack();
+
+    /**
+     * Generates an {@link ItemStack} which this CustomTool represents, taking {@code baseMeta} as a base.<br>
+     * If this CustomTool is broken (see {@link #broken()}), this method will always return {@link ItemStack#empty()}.
+     * @param baseMeta the base meta
+     * @return the itemstack with {@code baseMeta} as a base or, if {@code baseMeta} is {@code null}, this will behave the same as {@link #itemStack()}
+     */
+    ItemStack itemStack(@Nullable ItemMeta baseMeta);
 
     /**
      * Returns the ToolType of this CustomTool
@@ -67,7 +77,7 @@ public interface CustomTool {
 
     /**
      * Decreases the durability of this CustomTool by a given amount if the item is not unbreakable.
-     * For decreasing the durability of an unbreakable item, use {@link CustomTool#durability(int)} instead.
+     * For decreasing the durability of an unbreakable item, use {@link #durability(int)} instead.
      * @throws IllegalArgumentException if the amount is negative
      * @param amount the amount
      */

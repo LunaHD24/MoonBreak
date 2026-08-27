@@ -43,6 +43,7 @@ public final class MoonBreak extends JavaPlugin {
             if (player == null) return;
             Objects.requireNonNull(player.getAttribute(Attribute.BLOCK_BREAK_SPEED)).setBaseValue(blockBreakSpeed);
         });
+        blockLoader.saveAllBlocks();
     }
 
     public static MoonBreak instance() {

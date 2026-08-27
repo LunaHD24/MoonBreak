@@ -49,6 +49,7 @@ public class CustomBlockLoader {
         Bukkit.getAsyncScheduler().runNow(MoonBreak.instance(), (_) -> {
             try {
                 Files.write(CHUNK_INDEX_PATH, lines, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+                chunkIndexSaveRetries = 2;
             } catch (IOException e) {
                 MoonBreak.logger().log(Level.SEVERE, CHUNK_INDEX_SAVE_FAILED, e);
                 if (chunkIndexSaveRetries > 0) {
@@ -79,6 +80,7 @@ public class CustomBlockLoader {
                     String[] split = line.split(":");
                     chunkIndex.put(Long.parseLong(split[0]), split[1]);
                 });
+                chunkIndexLoadRetries = 2;
             } catch (IOException e) {
                 MoonBreak.logger().log(Level.SEVERE, "Could not load chunk index. Clearing chunk data will not work! Retrying in 5 seconds...");
                 if (chunkIndexLoadRetries > 0) {
@@ -166,31 +168,29 @@ public class CustomBlockLoader {
     }
 
     public void loadChunk(Chunk chunk) {
-        long chunkKey = chunk.getChunkKey();
-        PersistentDataContainer pdc = chunk.getPersistentDataContainer();
-        if (!pdc.has(BLOCKS_KEY)) return;
-        if (!chunkIndex.containsKey(chunkKey)) {
-            pdc.remove(BLOCKS_KEY);
-            return;
-        }
-
-        List<String> encodedStrings = pdc.get(BLOCKS_KEY, PersistentDataType.LIST.strings());
-        if (encodedStrings == null || encodedStrings.isEmpty()) return;
-
-        for (String encodedString : encodedStrings) {
-            String[] split = encodedString.split(";");
-
-            Location location = new Location(chunk.getWorld(), Integer.parseInt(split[0]),Integer.parseInt(split[1]), Integer.parseInt(split[2]));
-            Optional<CustomBlockType> optionalBlockType = BuiltinRegistries.BLOCK_TYPE.getEntry(Key.key(split[3]));
-            if (optionalBlockType.isEmpty()) throw new IllegalStateException(BLOCK_NOT_REGISTERED);
-            CustomBlockType customBlockType = optionalBlockType.get();
-
-            if (location.getBlock().getType() != customBlockType.material()) {
-                blockManager.place(new CustomBlockImpl(customBlockType, location));
+        Bukkit.getScheduler().scheduleSyncDelayedTask(MoonBreak.instance(), () -> {
+            long chunkKey = chunk.getChunkKey();
+            PersistentDataContainer pdc = chunk.getPersistentDataContainer();
+            if (!pdc.has(BLOCKS_KEY)) return;
+            if (!chunkIndex.containsKey(chunkKey)) {
+                pdc.remove(BLOCKS_KEY);
+                return;
             }
-            blockManager.getPlacedBlocks().computeIfAbsent(chunkKey, key -> new HashMap<>());
-            blockManager.getPlacedBlocks().get(chunkKey).put(location, customBlockType);
-        }
+
+            List<String> encodedStrings = pdc.get(BLOCKS_KEY, PersistentDataType.LIST.strings());
+            if (encodedStrings == null || encodedStrings.isEmpty()) return;
+
+            for (String encodedString : encodedStrings) {
+                String[] split = encodedString.split(";");
+
+                Location location = new Location(chunk.getWorld(), Integer.parseInt(split[0]),Integer.parseInt(split[1]), Integer.parseInt(split[2]));
+                Optional<CustomBlockType> optionalBlockType = BuiltinRegistries.BLOCK_TYPE.getEntry(Key.key(split[3]));
+                if (optionalBlockType.isEmpty()) throw new IllegalStateException(BLOCK_NOT_REGISTERED);
+                CustomBlockType customBlockType = optionalBlockType.get();
+
+                blockManager.place(location, customBlockType);
+            }
+        });
     }
 
     public void wipeAllBlockFromExistence() {
