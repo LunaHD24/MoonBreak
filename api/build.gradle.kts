@@ -1,9 +1,10 @@
 plugins {
-    id("java")
+    id("java-library")
+    id("maven-publish")
 }
 
 group = "dev.lunaa.moonbreak"
-version = "1.0.0"
+version = rootProject.version
 
 repositories {
     mavenCentral()
@@ -18,6 +19,35 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:26.2.build.+")
 }
 
-tasks.test {
-    useJUnitPlatform()
+tasks {
+    test {
+        useJUnitPlatform()
+    }
+
+    jar {
+        archiveBaseName.set("moonbreak-api")
+    }
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(25))
+    }
+    withSourcesJar()
+    withJavadocJar()
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            artifactId = "moonbreak-api"
+            from(components["java"])
+        }
+    }
+    repositories {
+        maven {
+            name = "GithubPages"
+            url = uri("${rootProject.projectDir}/build/gh-pages-repo")
+        }
+    }
 }

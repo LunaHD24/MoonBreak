@@ -2,8 +2,7 @@ package dev.lunaa.moonbreak.listener;
 
 import com.destroystokyo.paper.event.block.BlockDestroyEvent;
 import dev.lunaa.moonbreak.MoonBreak;
-import dev.lunaa.moonbreak.block.CustomBlock;
-import dev.lunaa.moonbreak.block.CustomBlockManager;
+import dev.lunaa.moonbreak.block.CustomBlockManagerImpl;
 import io.papermc.paper.event.block.BlockBreakBlockEvent;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
@@ -16,9 +15,9 @@ import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 public class CustomBlockChangeListeners implements Listener {
 
-    public static @MonotonicNonNull CustomBlockManager blockManager;
+    public static @MonotonicNonNull CustomBlockManagerImpl blockManager;
 
-    public static void init(CustomBlockManager blockManager) {
+    public static void init(CustomBlockManagerImpl blockManager) {
         CustomBlockChangeListeners.blockManager = blockManager;
     }
 
@@ -71,17 +70,18 @@ public class CustomBlockChangeListeners implements Listener {
     public void onBlockPlace(BlockPlaceEvent e) {
         Location location = e.getBlock().getLocation();
         if (!blockManager.isPlaced(location)) return;
+        e.setCancelled(true);
 
         MoonBreak.logger().warning("Tried placing block at a location where a custom block is present - cancelled");
-        e.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onMultiBlockPlace(BlockMultiPlaceEvent e) {
         e.getReplacedBlockStates().forEach(
                 state -> {
                     Location location = state.getLocation();
                     if (!blockManager.isPlaced(location)) return;
+                    e.setCancelled(true);
 
                     MoonBreak.logger().warning("Tried placing block at a location where a custom block is present (x:"
                             + location.getBlockX()
@@ -89,28 +89,18 @@ public class CustomBlockChangeListeners implements Listener {
                             + ", z:" + location.getBlockZ()
                             + ") - cancelled"
                     );
-                    e.setCancelled(true);
                 }
         );
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public void onBlockFromTo(BlockFromToEvent e) {
-        Location location = e.getBlock().getLocation();
-        if (!blockManager.isPlaced(location)) return;
-
-        CustomBlock customBlock = blockManager.getBlock(location).orElseThrow();
-        customBlock.location(e.getToBlock().getLocation());
-    }
-
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPistonExtend(BlockPistonExtendEvent e) {
-        e.getBlocks().forEach(block -> {
+        e.getBlocks().reversed().forEach(block -> {
             Location location = block.getLocation().clone();
             if (!blockManager.isPlaced(location)) return;
 
-            CustomBlock customBlock = blockManager.getBlock(location).orElseThrow();
-            customBlock.location(location.add(e.getDirection().getDirection()));
+            Location newLocation = location.clone().add(e.getDirection().getDirection());
+            blockManager.move(location, newLocation, true);
         });
     }
 
@@ -120,8 +110,8 @@ public class CustomBlockChangeListeners implements Listener {
             Location location = block.getLocation().clone();
             if (!blockManager.isPlaced(location)) return;
 
-            CustomBlock customBlock = blockManager.getBlock(location).orElseThrow();
-            customBlock.location(location.add(e.getDirection().getOppositeFace().getDirection()));
+            Location newLocation = location.clone().add(e.getDirection().getOppositeFace().getDirection());
+            blockManager.move(location, newLocation, true);
         });
     }
 }

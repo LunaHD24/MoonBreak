@@ -1,7 +1,10 @@
 package dev.lunaa.moonbreak.tool;
 
 import dev.lunaa.moonbreak.MoonBreakApi;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Optional;
 
@@ -22,6 +25,15 @@ public interface CustomTool {
     }
 
     /**
+     * Creates a new CustomTool instance from a {@link Player}'s mainhand if the item is a tool.
+     * @param player the player
+     * @return the CustomTool if it is one
+     */
+    static Optional<CustomTool> fromPlayer(Player player) {
+        return MoonBreakApi.provider().toolFromPlayer(player);
+    }
+
+    /**
      * Creates a new CustomTool instance from an {@link ItemStack} if the item is a tool
      * @param item the itemstack
      * @return the CustomTool if it is one
@@ -32,10 +44,18 @@ public interface CustomTool {
 
     /**
      * Generates an {@link ItemStack} which this CustomTool represents.<br>
-     * If this CustomTool is broken (see {@link CustomTool#broken()}), this method will always return {@link ItemStack#empty()}.
+     * If this CustomTool is broken (see {@link #broken()}), this method will always return {@link ItemStack#empty()}.
      * @return the itemstack
      */
     ItemStack itemStack();
+
+    /**
+     * Generates an {@link ItemStack} which this CustomTool represents, taking {@code baseMeta} as a base.<br>
+     * If this CustomTool is broken (see {@link #broken()}), this method will always return {@link ItemStack#empty()}.
+     * @param baseMeta the base meta
+     * @return the itemstack with {@code baseMeta} as a base or, if {@code baseMeta} is {@code null}, this will behave the same as {@link #itemStack()}
+     */
+    ItemStack itemStack(@Nullable ItemMeta baseMeta);
 
     /**
      * Returns the ToolType of this CustomTool
@@ -56,10 +76,14 @@ public interface CustomTool {
     void durability(int durability);
 
     /**
-     * Decreases the durability of this CustomTool by a given amount
+     * Decreases the durability of this CustomTool by a given amount if the item is not unbreakable.
+     * For decreasing the durability of an unbreakable item, use {@link #durability(int)} instead.
+     * @throws IllegalArgumentException if the amount is negative
      * @param amount the amount
      */
     default void damage(int amount) {
+        if (amount < 0) throw new IllegalArgumentException("Amount must be positive");
+        if (unbreakable()) return;
         durability(durability() - amount);
     }
 
@@ -72,9 +96,11 @@ public interface CustomTool {
 
     /**
      * Increases the durability of this CustomTool by a given amount
+     * @throws IllegalArgumentException if the amount is negative
      * @param amount the amount
      */
     default void repair(int amount) {
+        if (amount < 0) throw new IllegalArgumentException("Amount must be positive");
         durability(durability() + amount);
     }
 

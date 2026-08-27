@@ -1,10 +1,8 @@
 package dev.lunaa.moonbreak;
 
 import dev.lunaa.moonbreak.block.CustomBlockLoader;
-import dev.lunaa.moonbreak.block.CustomBlockManager;
+import dev.lunaa.moonbreak.block.CustomBlockManagerImpl;
 import dev.lunaa.moonbreak.listener.*;
-import dev.lunaa.moonbreak.registry.Registrable;
-import dev.lunaa.moonbreak.registry.ResourceRegistryImpl;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
@@ -23,9 +21,8 @@ public final class MoonBreak extends JavaPlugin {
 
     private static @MonotonicNonNull MoonBreak instance;
     private @MonotonicNonNull static Logger logger;
-    private @MonotonicNonNull ResourceRegistryImpl<Registrable> resourceRegistry;
     private @MonotonicNonNull InternalProviderImpl internalProvider;
-    private @MonotonicNonNull CustomBlockManager blockManager;
+    private @MonotonicNonNull CustomBlockManagerImpl blockManager;
     private @MonotonicNonNull CustomBlockLoader blockLoader;
     private @MonotonicNonNull BreakingService breakingService;
 
@@ -46,6 +43,7 @@ public final class MoonBreak extends JavaPlugin {
             if (player == null) return;
             Objects.requireNonNull(player.getAttribute(Attribute.BLOCK_BREAK_SPEED)).setBaseValue(blockBreakSpeed);
         });
+        blockLoader.saveAllBlocks();
     }
 
     public static MoonBreak instance() {
@@ -67,6 +65,14 @@ public final class MoonBreak extends JavaPlugin {
         pm.registerEvents(new PlayerQuitListener(), this);
         pm.registerEvents(new PlayerMoveListener(), this);
         pm.registerEvents(new PlayerBreakBlockListener(), this);
+        pm.registerEvents(new PlayerInteractListener(), this);
+        pm.registerEvents(new PlayerInteractAtEntityListener(), this);
+
+        pm.registerEvents(new BlockDamageListener(), this);
+        pm.registerEvents(new BlockBreakProgressUpdateListener(), this);
+        pm.registerEvents(new BlockDamageAbortListener(), this);
+
+        pm.registerEvents(new EntityDamageByEntityListener(), this);
 
         pm.registerEvents(new ChunkLoadListener(), this);
         pm.registerEvents(new ChunkUnloadListener(), this);
@@ -77,9 +83,8 @@ public final class MoonBreak extends JavaPlugin {
     }
 
     private void initializeFields() {
-        resourceRegistry = new ResourceRegistryImpl<>();
-        internalProvider = new InternalProviderImpl(resourceRegistry);
-        blockManager = new CustomBlockManager();
+        internalProvider = new InternalProviderImpl();
+        blockManager = new CustomBlockManagerImpl();
         blockLoader = new CustomBlockLoader(blockManager);
         breakingService = new BreakingService();
     }
@@ -101,11 +106,11 @@ public final class MoonBreak extends JavaPlugin {
         return previousBaseBlockBreakSpeeds.get(player.getUniqueId());
     }
 
-    public ResourceRegistryImpl<Registrable> resourceRegistry() {
-        return resourceRegistry;
+    public void removePreviousBaseBlockBreakSpeed(Player player) {
+        previousBaseBlockBreakSpeeds.remove(player.getUniqueId());
     }
 
-    public CustomBlockManager blockManager() {
+    public CustomBlockManagerImpl blockManager() {
         return blockManager;
     }
 

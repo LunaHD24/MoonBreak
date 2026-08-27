@@ -1,3 +1,3 @@
-rootProject.name = "MoonBreak"
+rootProject.name = "moonbreak"
 
 include("api")

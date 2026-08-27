@@ -8,11 +8,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.components.ToolComponent;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -22,6 +24,7 @@ import java.util.Optional;
 public class CustomToolImpl implements CustomTool {
 
     private static final ItemProperty<Integer> DURABILITY = ItemProperty.integer(Key.key(MoonBreak.instance(), "durability"));
+    private static final ItemProperty<Boolean> UNBREAKABLE = ItemProperty.bool(Key.key(MoonBreak.instance(), "unbreakable"));
 
     private final Key id;
     private final CustomToolType type;
@@ -35,9 +38,15 @@ public class CustomToolImpl implements CustomTool {
         this.durability = type.maxDurability();
         this.unbreakable = false;
 
-        Optional<Key> optionalId = MoonBreak.instance().resourceRegistry().getKey(type);
+        Optional<Key> optionalId = BuiltinRegistries.TOOL_TYPE.getKey(type);
         optionalId.orElseThrow(() -> new IllegalStateException("Tool type not registered"));
         id = optionalId.get();
+    }
+
+    public static Optional<CustomTool> fromPlayer(Player player) {
+        ItemStack item = player.getInventory().getItemInMainHand();
+        if (item.getType() == Material.AIR) return Optional.empty();
+        return from(item);
     }
 
     public static Optional<CustomTool> from(ItemStack item) {
@@ -48,19 +57,24 @@ public class CustomToolImpl implements CustomTool {
         if (optionalType.isEmpty()) return Optional.empty();
 
         CustomToolImpl tool = new CustomToolImpl(optionalType.get());
-        tool.durability(DURABILITY.get(item).orElseThrow(() -> new IllegalStateException("Tool does not have durability value")));
+        tool.durability(DURABILITY.get(item).orElse(tool.type().maxDurability()));
+        tool.unbreakable(UNBREAKABLE.get(item).orElse(false));
 
         return Optional.of(tool);
     }
 
     @Override
-    @SuppressWarnings("UnstableApiUsage")
     public ItemStack itemStack() {
+        if (!isDirty && item != null) return item.clone();
+        return itemStack(null);
+    }
+
+    @Override
+    public ItemStack itemStack(@Nullable ItemMeta baseMeta) {
         if (broken()) return ItemStack.empty();
-        if (!isDirty) return item.clone();
 
         ItemStack item = new ItemStack(type.material());
-        ItemMeta meta = item.getItemMeta();
+        ItemMeta meta = baseMeta == null ? item.getItemMeta() : baseMeta.clone();
 
         meta.displayName(type.name());
         meta.lore(type.lore());
@@ -73,10 +87,11 @@ public class CustomToolImpl implements CustomTool {
             damageable.setDamage(maxDurability - durability);
         }
 
+        ItemProperty.ITEM_ID.set(meta, id);
+        DURABILITY.set(meta, durability);
+        UNBREAKABLE.set(meta, unbreakable);
         meta.setTool(getToolComponent(item.getType(), meta));
         item.setItemMeta(meta);
-        ItemProperty.ITEM_ID.set(item, id);
-        DURABILITY.set(item, durability);
 
         this.item = item;
         isDirty = false;
@@ -122,8 +137,9 @@ public class CustomToolImpl implements CustomTool {
             }
         }
 
-        if (!type.includeVanillaMineables()) return toolComponent;
+        if (!type.includeVanillaMineables() || !material.name().endsWith("PICKAXE")) return toolComponent;
 
+        // TODO: Set up for all tools - in some version (soon hopefully)
         Optional<VanillaTool> optionalVanillaTool = Arrays.stream(VanillaTool.values())
                 .filter(vanillaTool -> material.name().endsWith(vanillaTool.name()))
                 .findFirst();
@@ -148,7 +164,7 @@ public class CustomToolImpl implements CustomTool {
 
     @Override
     public void durability(int durability) {
-        this.durability = durability;
+        this.durability = Math.clamp(durability, 0, type().maxDurability());
         isDirty = true;
     }
 
@@ -167,6 +183,8 @@ public class CustomToolImpl implements CustomTool {
         PICKAXE,
         AXE,
         SHOVEL,
-        HOE
+        HOE,
+        SWORD,
+        SHEARS
     }
 }
