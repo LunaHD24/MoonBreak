@@ -151,7 +151,7 @@ public class BreakingService {
         }
 
         public void lastLookedAt(Location lastLookedAt) {
-            this.lastLookedAt = lastLookedAt;
+            this.lastLookedAt = lastLookedAt.clone();
         }
 
         public ItemStack lastHeldItem() {
@@ -159,7 +159,7 @@ public class BreakingService {
         }
 
         public void lastHeldItem(ItemStack lastHeldItem) {
-            this.lastHeldItem = lastHeldItem;
+            this.lastHeldItem = lastHeldItem.clone();
         }
 
         public boolean lastOnGround() {

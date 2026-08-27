@@ -6,6 +6,7 @@ import dev.lunaa.moonbreak.tool.CustomToolTypeImpl;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.Optional;
 
@@ -13,6 +14,8 @@ public class PlayerInteractAtEntityListener implements Listener {
 
     @EventHandler
     public void onPlayerInteractAtEntity(PlayerInteractAtEntityEvent e) {
+        if (e.getHand() != EquipmentSlot.HAND) return;
+
         Optional<CustomTool> optionalTool = CustomTool.fromPlayer(e.getPlayer());
         if (optionalTool.isEmpty()) return;
         CustomTool tool = optionalTool.get();

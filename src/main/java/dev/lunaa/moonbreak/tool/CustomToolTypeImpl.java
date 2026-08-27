@@ -63,6 +63,7 @@ public record CustomToolTypeImpl(
             speed = type.speed();
             correctToolFor = new ArrayList<>(type.correctToolFor());
             includeVanillaMineables = type.includeVanillaMineables();
+            overwriteVanillaMineables = type.overwriteVanillaMineables();
             affectedByWrongTool = type.affectedByWrongTool();
             affectedByUnderwater = type.affectedByUnderwater();
             affectedByFloating = type.affectedByFloating();

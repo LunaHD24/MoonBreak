@@ -29,7 +29,9 @@ public class CustomBlockManagerImpl implements CustomBlockManager {
             placedBlocks.put(chunkKey, blocks);
         }
 
-        if (!virtual) location.getBlock().setType(type.material());
+        if (!virtual) {
+            if (location.getBlock().getType() != type.material()) location.getBlock().setType(type.material());
+        }
         blocks.put(location, type);
     }
 

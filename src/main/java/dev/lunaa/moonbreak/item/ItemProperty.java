@@ -34,6 +34,10 @@ public final class ItemProperty<T> {
         return new ItemProperty<>(key, Object::toString, Integer::parseInt);
     }
 
+    public static ItemProperty<Boolean> bool(Key key) {
+        return new ItemProperty<>(key, value -> value ? "1" : "0", value -> value.equals("1"));
+    }
+
     public static ItemProperty<Key> key(Key key) {
         return new ItemProperty<>(key, Key::asString, Key::key);
     }

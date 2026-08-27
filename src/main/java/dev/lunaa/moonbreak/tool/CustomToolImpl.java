@@ -24,6 +24,7 @@ import java.util.Optional;
 public class CustomToolImpl implements CustomTool {
 
     private static final ItemProperty<Integer> DURABILITY = ItemProperty.integer(Key.key(MoonBreak.instance(), "durability"));
+    private static final ItemProperty<Boolean> UNBREAKABLE = ItemProperty.bool(Key.key(MoonBreak.instance(), "unbreakable"));
 
     private final Key id;
     private final CustomToolType type;
@@ -56,7 +57,8 @@ public class CustomToolImpl implements CustomTool {
         if (optionalType.isEmpty()) return Optional.empty();
 
         CustomToolImpl tool = new CustomToolImpl(optionalType.get());
-        tool.durability(DURABILITY.get(item).orElseThrow(() -> new IllegalStateException("Tool does not have durability value")));
+        tool.durability(DURABILITY.get(item).orElse(tool.type().maxDurability()));
+        tool.unbreakable(UNBREAKABLE.get(item).orElse(false));
 
         return Optional.of(tool);
     }
@@ -87,6 +89,7 @@ public class CustomToolImpl implements CustomTool {
 
         ItemProperty.ITEM_ID.set(meta, id);
         DURABILITY.set(meta, durability);
+        UNBREAKABLE.set(meta, unbreakable);
         meta.setTool(getToolComponent(item.getType(), meta));
         item.setItemMeta(meta);
 

@@ -77,7 +77,9 @@ public class CustomBlockLoader {
             try (BufferedReader reader = Files.newBufferedReader(CHUNK_INDEX_PATH, Charset.defaultCharset())) {
                 chunkIndex.clear();
                 reader.lines().forEach(line -> {
+                    if (line.isBlank()) return;
                     String[] split = line.split(":");
+                    if (split.length != 2) return;
                     chunkIndex.put(Long.parseLong(split[0]), split[1]);
                 });
                 chunkIndexLoadRetries = 2;
