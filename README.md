@@ -15,7 +15,7 @@
 Kotlin
 ```kotlin
 repositories {
-    maven("https://lunaa.dev/maven/repository")
+    maven("https://lunaa.dev/repository/maven")
 }
 
 dependencies {
@@ -26,7 +26,7 @@ Groovy
 ```groovy
 repositories {
     maven {
-        url = 'https://lunaa.dev/maven/repository'
+        url = 'https://lunaa.dev/repository/maven'
     }
 }
 
@@ -40,7 +40,7 @@ dependencies {
 <repositories>
     <repository>
         <id>lunaa-dev-repo</id>
-        <url>https://lunaa.dev/maven/repository/</url>
+        <url>https://lunaa.dev/repository/maven</url>
     </repository>
 </repositories>
 <dependencies>
