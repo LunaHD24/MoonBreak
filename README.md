@@ -4,6 +4,7 @@
 - Complete vanilla-like Breaking Simulation
 - Custom Blocks with their own Hardness values
 - Custom Tools with own speeds, durability & more
+- 100% pure Paper API, no NMS
 - Event Hook Callback Integration for Custom Tools
 - Ability to disable vanilla Behaviors for specific Tools
 - Incredibly lightweight <70KB (API [standalone]: ~12KB; Plugin [includes API]: ~69KB)
