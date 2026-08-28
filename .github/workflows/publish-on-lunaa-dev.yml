@@ -28,7 +28,7 @@ jobs:
       - name: Deploy to Github Pages Repository
         uses: peaceiris/actions-gh-pages@v3
         with:
-          personal_token: ${{ secrets.GH_PAGES_TOKEN }}
+          personal_token: ${{ secrets.LUNAA_DEV_SITE_TOKEN }}
           external_repository: LunaHD24/lunaa-dev-site
           publish_branch: main
           publish_dir: ./build/gh-pages-repo
