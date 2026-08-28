@@ -1,4 +1,4 @@
-**MoonBreak is an easy-to-use, high-performance Custom Tool and Block API**
+**MoonBreak is an easy-to-use, high-performance and lightweight Custom Tool and Block API**
 
 ## Feature Overview
 - Complete vanilla-like Breaking Simulation
