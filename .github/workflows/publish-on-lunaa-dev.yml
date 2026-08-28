@@ -4,6 +4,11 @@ on:
   release:
     types: [published]
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version/Tag'
+        required: false
+        default: ''
 
 jobs:
   publish:
@@ -22,8 +27,23 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
 
-      - name: Build and Publish API Locally
-        run: ./gradlew :api:publish
+      - name: Determine Version
+        id: get_version
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          if [ -z "$VERSION" ]; then
+            VERSION="${{ github.ref_name }}"
+          fi
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "Using version: $VERSION"
+
+      - name: Build API and Javadoc
+        run: ./gradlew :api:publish :api:javadoc -Pversion=$VERSION
+
+      - name: Copy Javadoc HTML to Maven Repository folder
+        run: |
+          mkdir -p build/gh-pages-repo/dev/lunaa/moonbreak/moonbreak-api/$VERSION/javadoc
+          cp -r api/build/docs/javadoc/* build/gh-pages-repo/dev/lunaa/moonbreak/moonbreak-api/$VERSION/javadoc/
 
       - name: Deploy to Github Pages Repository
         uses: peaceiris/actions-gh-pages@v3
