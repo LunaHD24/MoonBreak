@@ -15,12 +15,13 @@ Detailed information on how to install the plugin and integrate the API using Gr
 ## Getting Started
 
 ### Creating a Custom Tool
-(Mining Speed is not limited to vanilla values)
+(Mining Speed/Level are not limited to vanilla values)
 ```java
 CustomToolType HAMMER = CustomToolType.builder()
         .name(Component.text("Hammer"))
         .material(Material.IRON_PICKAXE)
         .speed(CustomToolType.MiningSpeed.GOLD)
+        .miningLevel(CustomToolType.MiningLevel.IRON)
         .maxDurability(1000)
         .affectedByWrongTool(true)
         .affectedUnderwater(true)
