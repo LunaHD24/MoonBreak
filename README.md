@@ -9,49 +9,8 @@
 - Incredibly lightweight <70KB (API [standalone]: ~12KB; Plugin [includes API]: ~69KB)
 - Low impact on server resources
 
-## Gradle/Maven Integration
-
-### Gradle
-Kotlin
-```kotlin
-repositories {
-    maven("https://lunaa.dev/repository/maven")
-}
-
-dependencies {
-    compileOnly("dev.lunaa.moonbreak:moonbreak-api:1.1.0")
-}
-```
-Groovy
-```groovy
-repositories {
-    maven {
-        url = 'https://lunaa.dev/repository/maven'
-    }
-}
-
-dependencies {
-    compileOnly 'dev.lunaa.moonbreak:moonbreak-api:1.1.0'
-}
-```
-
-### Maven
-```xml
-<repositories>
-    <repository>
-        <id>lunaa-dev-repo</id>
-        <url>https://lunaa.dev/repository/maven</url>
-    </repository>
-</repositories>
-<dependencies>
-    <dependency>
-        <groupId>dev.lunaa.moonbreak</groupId>
-        <artifactId>moonbreak-api</artifactId>
-        <version>1.1.0</version>
-        <scope>provided</scope>
-    </dependency>
-</dependencies>
-```
+## Installation
+Detailed information on how to install the plugin and integrate the API using Gradle or Maven can be found in the [Wiki](https://github.com/LunaHD24/MoonBreak/wiki).
 
 ## Getting Started
 
