@@ -11,6 +11,7 @@
 - Low impact on server resources
 
 ## Installation
+Compatibility is listed at the top of each release, please make sure to check you download the right one!<br>
 Detailed information on how to install the plugin and integrate the API using Gradle or Maven can be found in the [Wiki](https://github.com/LunaHD24/MoonBreak/wiki).
 
 ## Getting Started
