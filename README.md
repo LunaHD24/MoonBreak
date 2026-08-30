@@ -56,5 +56,5 @@ CustomBlockManager.manager().place(yourLocation, LIGHT_OBSIDIAN);
 
 ## Documentation & License
 Documentation can be found in the wiki [here](https://github.com/LunaHD24/MoonBreak/wiki).<br>
-JavaDocs in the web can be found [here](https://lunaa.dev/repository/maven/dev/lunaa/moonbreak/moonbreak-api/1.1.0/javadoc).<br>
+JavaDocs in the web can be found [here](https://lunaa.dev/repository/maven/dev/lunaa/moonbreak/moonbreak-api/1.2.0/javadoc).<br>
 MoonBreak is licensed under the GNU General Public License v3.0
