@@ -10,7 +10,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:26.2.build.+")
+    compileOnly("io.papermc.paper:paper-api:26.1.1.build.+")
     implementation(project(":api"))
 }
 
@@ -26,7 +26,7 @@ tasks {
     }
 
     runServer {
-        minecraftVersion("26.2")
+        minecraftVersion("26.1.1")
         jvmArgs("-Xms2G", "-Xmx2G", "-Dcom.mojang.eula.agree=true")
     }
 
