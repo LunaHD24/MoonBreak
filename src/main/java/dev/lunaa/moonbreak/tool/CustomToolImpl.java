@@ -73,11 +73,14 @@ public class CustomToolImpl implements CustomTool {
     public ItemStack itemStack(@Nullable ItemMeta baseMeta) {
         if (broken()) return ItemStack.empty();
 
+        boolean noMeta = baseMeta == null;
         ItemStack item = new ItemStack(type.material());
-        ItemMeta meta = baseMeta == null ? item.getItemMeta() : baseMeta.clone();
+        ItemMeta meta = noMeta ? item.getItemMeta() : baseMeta.clone();
 
-        meta.displayName(type.name());
-        meta.lore(type.lore());
+        if (noMeta) {
+            meta.displayName(type.name());
+            meta.lore(type.lore());
+        }
         meta.setUnbreakable(unbreakable);
 
         if (meta instanceof Damageable damageable) {
