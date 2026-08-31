@@ -6,6 +6,8 @@ import dev.lunaa.moonbreak.tool.CustomToolImpl;
 import dev.lunaa.moonbreak.tool.CustomToolType;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -15,6 +17,8 @@ import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 public class BreakingService {
+
+    public static final NamespacedKey MODIFIER_KEY = new NamespacedKey(MoonBreak.instance(), "breakspeed");
 
     private static final int INACTIVE_DELAY_TICKS = 5 * 20;
     private static final HashMap<UUID, Integer> activePlayers = new HashMap<>();
@@ -66,7 +70,6 @@ public class BreakingService {
         activePlayers.remove(player.getUniqueId());
         lastStates.remove(player.getUniqueId());
         resetToInitialValues(player);
-        MoonBreak.instance().removePreviousBaseBlockBreakSpeed(player);
     }
 
     private void updateActivePlayers() {
@@ -92,12 +95,16 @@ public class BreakingService {
     }
 
     private void resetToInitialValues(Player player) {
-        Objects.requireNonNull(player.getAttribute(Attribute.BLOCK_BREAK_SPEED)).setBaseValue(MoonBreak.instance().previousBaseBlockBreakSpeed(player));
+        Objects.requireNonNull(player.getAttribute(Attribute.BLOCK_BREAK_SPEED)).removeModifier(MODIFIER_KEY);
     }
 
     private void calcBlockBreakSpeed(Player player, @Nullable CustomTool tool, Block block, @Nullable CustomBlockType blockType, boolean onGround, boolean underWater) {
+        AttributeInstance attribute = Objects.requireNonNull(player.getAttribute(Attribute.BLOCK_BREAK_SPEED));
+        attribute.removeModifier(MODIFIER_KEY);
+
         float vanillaBlockHardness = block.getType().getHardness();
-        double breakSpeed = blockType != null ? 1f/(blockType.hardness()/vanillaBlockHardness) : 1;
+        double playerBreakSpeed = attribute.getValue();
+        double breakSpeed = blockType != null ? playerBreakSpeed/(blockType.hardness()/vanillaBlockHardness) : playerBreakSpeed;
 
         if (tool != null) {
             CustomToolType type = tool.type();
@@ -113,7 +120,8 @@ public class BreakingService {
             }
         }
 
-        Objects.requireNonNull(player.getAttribute(Attribute.BLOCK_BREAK_SPEED)).setBaseValue(breakSpeed);
+        double difference = breakSpeed - playerBreakSpeed;
+        attribute.addTransientModifier(new AttributeModifier(MODIFIER_KEY, difference, AttributeModifier.Operation.ADD_NUMBER));
     }
 
     private boolean lastStateChanged(UUID uuid, Location lookingAt, ItemStack handItem, boolean onGround, boolean underwater) {
