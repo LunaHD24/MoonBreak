@@ -7,6 +7,7 @@ import dev.lunaa.moonbreak.tool.CustomToolType;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.Nullable;
@@ -104,7 +105,11 @@ public class BreakingService {
                 breakSpeed *= 5;
             }
             if (!type.affectedByUnderwater() && underWater) {
-                breakSpeed *= 5;
+                ItemStack helmet = player.getEquipment().getHelmet();
+                boolean hasAquaAffinity = helmet != null
+                        && !helmet.isEmpty()
+                        && helmet.containsEnchantment(Enchantment.AQUA_AFFINITY);
+                if (!hasAquaAffinity) breakSpeed *= 5;
             }
         }
 
