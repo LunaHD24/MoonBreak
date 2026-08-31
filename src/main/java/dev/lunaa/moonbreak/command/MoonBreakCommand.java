@@ -49,9 +49,7 @@ public class MoonBreakCommand {
                                 double speed = ctx.getArgument("speed", double.class);
                                 List<Player> players = playersResolver.resolve(src);
 
-                                players.forEach(p -> {
-                                    Objects.requireNonNull(p.getAttribute(Attribute.BLOCK_BREAK_SPEED)).setBaseValue(speed);
-                                });
+                                players.forEach(p -> Objects.requireNonNull(p.getAttribute(Attribute.BLOCK_BREAK_SPEED)).setBaseValue(speed));
                                 int playerCount = players.size();
                                 src.getSender().sendMessage(Component.text("Set break speed " + speed + " for " + playerCount + " player" + (playerCount != 1 ? "s" : "")));
 
