@@ -3,21 +3,13 @@ package dev.lunaa.moonbreak;
 import dev.lunaa.moonbreak.block.CustomBlockLoader;
 import dev.lunaa.moonbreak.block.CustomBlockManagerImpl;
 import dev.lunaa.moonbreak.listener.*;
-import org.bukkit.Bukkit;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.UUID;
 import java.util.logging.Logger;
 
 public final class MoonBreak extends JavaPlugin {
-
-    private static final HashMap<UUID, Double> previousBaseBlockBreakSpeeds = new HashMap<>();
 
     private static @MonotonicNonNull MoonBreak instance;
     private @MonotonicNonNull static Logger logger;
@@ -38,11 +30,6 @@ public final class MoonBreak extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        previousBaseBlockBreakSpeeds.forEach((uuid, blockBreakSpeed) -> {
-            Player player = Bukkit.getPlayer(uuid);
-            if (player == null) return;
-            Objects.requireNonNull(player.getAttribute(Attribute.BLOCK_BREAK_SPEED)).setBaseValue(blockBreakSpeed);
-        });
         blockLoader.saveAllBlocks();
     }
 
@@ -61,7 +48,6 @@ public final class MoonBreak extends JavaPlugin {
     private void registerEvents() {
         PluginManager pm = getServer().getPluginManager();
 
-        pm.registerEvents(new PlayerJoinListener(), this);
         pm.registerEvents(new PlayerQuitListener(), this);
         pm.registerEvents(new PlayerMoveListener(), this);
         pm.registerEvents(new PlayerBreakBlockListener(), this);
@@ -96,18 +82,6 @@ public final class MoonBreak extends JavaPlugin {
 
     private void initializeApi() {
         MoonBreakApi.instance().provider = internalProvider;
-    }
-
-    public void previousBaseBlockBreakSpeed(Player player, double blockBreakSpeed) {
-        previousBaseBlockBreakSpeeds.put(player.getUniqueId(), blockBreakSpeed);
-    }
-
-    public double previousBaseBlockBreakSpeed(Player player) {
-        return previousBaseBlockBreakSpeeds.get(player.getUniqueId());
-    }
-
-    public void removePreviousBaseBlockBreakSpeed(Player player) {
-        previousBaseBlockBreakSpeeds.remove(player.getUniqueId());
     }
 
     public CustomBlockManagerImpl blockManager() {
