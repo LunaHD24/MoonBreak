@@ -18,11 +18,15 @@ import java.util.*;
 
 public class BreakingService {
 
-    public static final NamespacedKey MODIFIER_KEY = new NamespacedKey(MoonBreak.instance(), "breakspeed");
+    private static final NamespacedKey MODIFIER_KEY = new NamespacedKey(MoonBreak.instance(), "breakspeed");
 
     private static final int INACTIVE_DELAY_TICKS = 5 * 20;
     private static final HashMap<UUID, Integer> activePlayers = new HashMap<>();
     private static final HashMap<UUID, LastState> lastStates = new HashMap<>();
+
+    public static void removeBreakSpeedModifier(Player player) {
+        Objects.requireNonNull(player.getAttribute(Attribute.BLOCK_BREAK_SPEED)).removeModifier(MODIFIER_KEY);
+    }
 
     public void updateBreakSpeeds() {
         updateActivePlayers();
@@ -99,29 +103,30 @@ public class BreakingService {
     }
 
     private void calcBlockBreakSpeed(Player player, @Nullable CustomTool tool, Block block, @Nullable CustomBlockType blockType, boolean onGround, boolean underWater) {
-        AttributeInstance attribute = Objects.requireNonNull(player.getAttribute(Attribute.BLOCK_BREAK_SPEED));
-        attribute.removeModifier(MODIFIER_KEY);
-
+        double factor = 1;
         float vanillaBlockHardness = block.getType().getHardness();
-        double playerBreakSpeed = attribute.getValue();
-        double breakSpeed = blockType != null ? playerBreakSpeed/(blockType.hardness()/vanillaBlockHardness) : playerBreakSpeed;
+
+        if (blockType != null && vanillaBlockHardness > 0) {
+            factor *= (vanillaBlockHardness/blockType.hardness());
+        }
 
         if (tool != null) {
             CustomToolType type = tool.type();
             if (!type.affectedByFloating() && !onGround) {
-                breakSpeed *= 5;
+                factor *= 5;
             }
             if (!type.affectedByUnderwater() && underWater) {
                 ItemStack helmet = player.getEquipment().getHelmet();
                 boolean hasAquaAffinity = helmet != null
                         && !helmet.isEmpty()
                         && helmet.containsEnchantment(Enchantment.AQUA_AFFINITY);
-                if (!hasAquaAffinity) breakSpeed *= 5;
+                if (!hasAquaAffinity) factor *= 5;
             }
         }
 
-        double difference = breakSpeed - playerBreakSpeed;
-        attribute.addTransientModifier(new AttributeModifier(MODIFIER_KEY, difference, AttributeModifier.Operation.ADD_NUMBER));
+        AttributeInstance attribute = Objects.requireNonNull(player.getAttribute(Attribute.BLOCK_BREAK_SPEED));
+        attribute.removeModifier(MODIFIER_KEY);
+        attribute.addTransientModifier(new AttributeModifier(MODIFIER_KEY, factor-1, AttributeModifier.Operation.MULTIPLY_SCALAR_1));
     }
 
     private boolean lastStateChanged(UUID uuid, Location lookingAt, ItemStack handItem, boolean onGround, boolean underwater) {

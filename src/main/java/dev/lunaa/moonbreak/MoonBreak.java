@@ -30,6 +30,7 @@ public final class MoonBreak extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        getServer().getOnlinePlayers().forEach(BreakingService::removeBreakSpeedModifier);
         blockLoader.saveAllBlocks();
     }
 
