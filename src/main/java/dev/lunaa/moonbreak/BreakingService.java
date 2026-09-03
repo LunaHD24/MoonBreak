@@ -29,6 +29,12 @@ public class BreakingService {
         Objects.requireNonNull(player.getAttribute(Attribute.BLOCK_BREAK_SPEED)).removeModifier(MODIFIER_KEY);
     }
 
+    public static void removeBreakSpeedModifier(UUID uuid) {
+        Player player = Bukkit.getPlayer(uuid);
+        if (player == null) return;
+        removeBreakSpeedModifier(player);
+    }
+
     public void updateBreakSpeeds() {
         updateActivePlayers();
         if (activePlayers.isEmpty()) return;
@@ -38,7 +44,7 @@ public class BreakingService {
             if (player == null) continue;
             if (player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR) {
                 lastStates.remove(uuid);
-                resetToInitialValues(player);
+                removeBreakSpeedModifier(player);
                 continue;
             }
 
@@ -46,7 +52,7 @@ public class BreakingService {
             Block block = player.getTargetBlockExact((int) Math.ceil(range), FluidCollisionMode.NEVER);
             if (block == null) {
                 lastStates.remove(uuid);
-                resetToInitialValues(player);
+                removeBreakSpeedModifier(player);
                 continue;
             }
 
@@ -74,7 +80,7 @@ public class BreakingService {
     public void removeTrackedPlayer(Player player) {
         activePlayers.remove(player.getUniqueId());
         lastStates.remove(player.getUniqueId());
-        resetToInitialValues(player);
+        removeBreakSpeedModifier(player);
     }
 
     private void updateActivePlayers() {
@@ -88,20 +94,10 @@ public class BreakingService {
             long difference = Instant.now().getEpochSecond() - entry.getValue();
             if (difference > INACTIVE_DELAY_SECONDS) {
                 lastStates.remove(uuid);
-                resetToInitialValues(uuid);
+                removeBreakSpeedModifier(uuid);
                 it.remove();
             }
         }
-    }
-
-    private void resetToInitialValues(UUID uuid) {
-        Player player = Bukkit.getPlayer(uuid);
-        if (player == null) return;
-        resetToInitialValues(player);
-    }
-
-    private void resetToInitialValues(Player player) {
-        Objects.requireNonNull(player.getAttribute(Attribute.BLOCK_BREAK_SPEED)).removeModifier(MODIFIER_KEY);
     }
 
     private void calcBlockBreakSpeed(Player player, @Nullable CustomTool tool, Block block, @Nullable CustomBlockType blockType, boolean onGround, boolean underWater) {
