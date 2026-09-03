@@ -1,5 +1,6 @@
 package dev.lunaa.moonbreak.listener;
 
+import dev.lunaa.moonbreak.MoonBreak;
 import dev.lunaa.moonbreak.tool.CustomTool;
 import dev.lunaa.moonbreak.tool.CustomToolType;
 import dev.lunaa.moonbreak.tool.CustomToolTypeImpl;
@@ -15,6 +16,8 @@ public class BlockBreakProgressUpdateListener implements Listener {
     @EventHandler
     public void onBlockDamageUpdate(BlockBreakProgressUpdateEvent e) {
         if (!(e.getEntity() instanceof Player player)) return;
+
+        MoonBreak.instance().breakingService().wasActive(player);
 
         Optional<CustomTool> optionalTool = CustomTool.fromPlayer(player);
         if (optionalTool.isEmpty()) return;

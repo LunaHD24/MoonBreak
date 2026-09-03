@@ -14,14 +14,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.Nullable;
 
+import java.time.Instant;
 import java.util.*;
 
 public class BreakingService {
 
     private static final NamespacedKey MODIFIER_KEY = new NamespacedKey(MoonBreak.instance(), "breakspeed");
 
-    private static final int INACTIVE_DELAY_TICKS = 5 * 20;
-    private static final HashMap<UUID, Integer> activePlayers = new HashMap<>();
+    private static final int INACTIVE_DELAY_SECONDS = 2 * 60;
+    private static final HashMap<UUID, Long> activePlayers = new HashMap<>();
     private static final HashMap<UUID, LastState> lastStates = new HashMap<>();
 
     public static void removeBreakSpeedModifier(Player player) {
@@ -67,7 +68,7 @@ public class BreakingService {
     }
 
     public void wasActive(Player player) {
-        activePlayers.put(player.getUniqueId(), 0);
+        activePlayers.put(player.getUniqueId(), Instant.now().getEpochSecond());
     }
 
     public void removeTrackedPlayer(Player player) {
@@ -79,16 +80,17 @@ public class BreakingService {
     private void updateActivePlayers() {
         if (activePlayers.isEmpty()) return;
 
-        Iterator<Map.Entry<UUID, Integer>> it = activePlayers.entrySet().iterator();
+        Iterator<Map.Entry<UUID, Long>> it = activePlayers.entrySet().iterator();
         while (it.hasNext()) {
-            Map.Entry<UUID, Integer> entry = it.next();
-            if (entry.getValue() > INACTIVE_DELAY_TICKS) {
-                lastStates.remove(entry.getKey());
-                resetToInitialValues(entry.getKey());
+            Map.Entry<UUID, Long> entry = it.next();
+            UUID uuid = entry.getKey();
+
+            long difference = Instant.now().getEpochSecond() - entry.getValue();
+            if (difference > INACTIVE_DELAY_SECONDS) {
+                lastStates.remove(uuid);
+                resetToInitialValues(uuid);
                 it.remove();
-                continue;
             }
-            entry.setValue(entry.getValue() + 1);
         }
     }
 
