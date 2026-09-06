@@ -6,6 +6,7 @@ import io.papermc.paper.event.block.BlockBreakProgressUpdateEvent;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.event.Event;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageAbortEvent;
 import org.bukkit.event.block.BlockDamageEvent;
@@ -339,6 +340,10 @@ public interface CustomToolType extends Registrable {
         public static final EventHook<BlockBreakProgressUpdateEvent> BLOCK_DAMAGE_UPDATE = new EventHook<>(BlockBreakProgressUpdateEvent.class);
         public static final EventHook<BlockDamageAbortEvent> BLOCK_DAMAGE_ABORT = new EventHook<>(BlockDamageAbortEvent.class);
         public static final EventHook<BlockBreakEvent> PRE_BLOCK_BREAK = new EventHook<>(BlockBreakEvent.class);
+
+        /**
+         * This hook is called during an event with {@link EventPriority#MONITOR} and should NEVER perform any modifications to the event.
+         */
         public static final EventHook<BlockBreakEvent> POST_BLOCK_BREAK = new EventHook<>(BlockBreakEvent.class);
         public static final EventHook<PlayerInteractEvent> INTERACT = new EventHook<>(PlayerInteractEvent.class);
         public static final EventHook<PlayerInteractAtEntityEvent> INTERACT_AT_ENTITY = new EventHook<>(PlayerInteractAtEntityEvent.class);

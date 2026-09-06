@@ -18,14 +18,17 @@ import java.util.Optional;
 
 public class PlayerBreakBlockListener implements Listener {
 
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onPlayerBreakBlock(BlockBreakEvent e) {
-        if (e.isCancelled()) return;
-
+    @EventHandler
+    public void onPlayerBreakBlockPre(BlockBreakEvent e) {
         Player player = e.getPlayer();
         Optional<CustomTool> optionalTool = CustomTool.fromPlayer(player);
         optionalTool.ifPresent(customTool -> executeHook(e, true, customTool));
-        if (e.isCancelled()) return;
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPlayerBreakBlockPost(BlockBreakEvent e) {
+        Player player = e.getPlayer();
+        Optional<CustomTool> optionalTool = CustomTool.fromPlayer(player);
 
         CustomBlockManagerImpl blockManager = MoonBreak.instance().blockManager();
         Location blockLocation = e.getBlock().getLocation();

@@ -36,8 +36,9 @@ public final class MoonBreak extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        MoonBreak.logger().info("Saving all blocks");
+        getServer().getOnlinePlayers().forEach(BreakingService::removeBreakSpeedModifier);
 
+        MoonBreak.logger().info("Saving all blocks");
         int blockCount = blockManager.countAllBlocks();
         int chunkCount = blockManager.countAllChunksWithBlocks();
         blockLoader.saveAllBlocks(false);
