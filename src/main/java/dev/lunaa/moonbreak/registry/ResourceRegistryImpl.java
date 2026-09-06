@@ -26,4 +26,9 @@ public final class ResourceRegistryImpl<T extends Registrable> implements Resour
     public Optional<Key> getKey(T entry) {
         return Optional.ofNullable(valueToKey.get(entry));
     }
+
+    @Override
+    public boolean isRegistered(T entry) {
+        return valueToKey.containsKey(entry);
+    }
 }
