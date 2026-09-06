@@ -1,6 +1,7 @@
 package dev.lunaa.moonbreak.block;
 
 import dev.lunaa.moonbreak.MoonBreak;
+import dev.lunaa.moonbreak.registry.BuiltinRegistries;
 import org.bukkit.*;
 
 import java.util.*;
@@ -62,6 +63,8 @@ public class CustomBlockManagerImpl implements CustomBlockManager {
     }
 
     public void place(Location location, CustomBlockType type, boolean virtual) {
+        if (!BuiltinRegistries.BLOCK_TYPE.isRegistered(type)) throw new IllegalArgumentException("Cannot place block. CustomBlockType is not registered");
+
         WorldChunkKey worldChunkKey = WorldChunkKey.from(location);
         ChunkBlockKey chunkBlockKey = ChunkBlockKey.from(location);
 
