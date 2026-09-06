@@ -32,7 +32,7 @@ public class MoonBreakCommand {
                         .hoverEvent(Component.text("Delete all present custom blocks", NamedTextColor.RED))
                         .clickEvent(ClickEvent.callback(audience -> {
                             if (!(audience instanceof Player player) || !player.hasPermission(Permissions.MOONBREAK)) return;
-                            MoonBreak.instance().blockLoader().wipeAllBlockFromExistence();
+                            MoonBreak.instance().blockLoader().wipe(player);
                             audience.sendMessage(Component.text("Successfully deleted all custom blocks", NamedTextColor.GREEN));
                         })));
 

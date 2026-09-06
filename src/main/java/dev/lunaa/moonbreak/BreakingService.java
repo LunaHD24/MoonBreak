@@ -24,6 +24,11 @@ public class BreakingService {
     private static final HashMap<UUID, Integer> activePlayers = new HashMap<>();
     private static final HashMap<UUID, LastState> lastStates = new HashMap<>();
 
+    public void clearAllData() {
+        activePlayers.clear();
+        lastStates.clear();
+    }
+
     public void updateBreakSpeeds() {
         updateActivePlayers();
         if (activePlayers.isEmpty()) return;

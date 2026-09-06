@@ -1,17 +1,64 @@
 package dev.lunaa.moonbreak.block;
 
-import org.bukkit.Location;
-import org.bukkit.Material;
+import dev.lunaa.moonbreak.MoonBreak;
+import org.bukkit.*;
 
-import java.util.HashMap;
-import java.util.Optional;
+import java.util.*;
 
 public class CustomBlockManagerImpl implements CustomBlockManager {
 
     private final HashMap<WorldChunkKey, HashMap<ChunkBlockKey, CustomBlockType>> placedBlocks = new HashMap<>();
 
-    public HashMap<WorldChunkKey, HashMap<ChunkBlockKey, CustomBlockType>> getPlacedBlocks() {
-        return placedBlocks;
+    public void clearAllChunkData() {
+        placedBlocks.clear();
+    }
+
+    public void clearChunkData(Chunk chunk) {
+        WorldChunkKey worldChunkKey = WorldChunkKey.from(chunk);
+        placedBlocks.remove(worldChunkKey);
+    }
+
+    public int countAllChunksWithBlocks() {
+        return placedBlocks.size();
+    }
+
+    public int countAllBlocks() {
+        int count = 0;
+        for (Map.Entry<WorldChunkKey, HashMap<ChunkBlockKey, CustomBlockType>> entry : placedBlocks.entrySet()) {
+            count += entry.getValue().size();
+        }
+        return count;
+    }
+
+    public ArrayList<Chunk> chunksWithBlocks() {
+        ArrayList<Chunk> chunks = new ArrayList<>();
+        Set<WorldChunkKey> worldChunkKeys = Set.copyOf(placedBlocks.keySet());
+        if (worldChunkKeys.isEmpty()) return chunks;
+
+        for (WorldChunkKey worldChunkKey : worldChunkKeys) {
+            World world = Bukkit.getWorld(worldChunkKey.worldId());
+            if (world == null) {
+                MoonBreak.logger().warning("Tried obtaining chunks with blocks. World with the id " + worldChunkKey.worldId() + " was not found. Placed blocks will be deleted.");
+                placedBlocks.remove(worldChunkKey);
+                continue;
+            }
+
+            chunks.add(world.getChunkAt(worldChunkKey.chunkKey(), false));
+        }
+
+        return chunks;
+    }
+
+    @SuppressWarnings("unchecked")
+    public Optional<HashMap<ChunkBlockKey, CustomBlockType>> blocksInChunk(Chunk chunk) {
+        HashMap<ChunkBlockKey, CustomBlockType> blocks = placedBlocks.get(WorldChunkKey.from(chunk));
+        if (blocks == null) return Optional.empty();
+        return Optional.of((HashMap<ChunkBlockKey, CustomBlockType>) blocks.clone());
+    }
+
+    @SuppressWarnings("unchecked")
+    public void placeChunkBlocks(Chunk chunk, HashMap<ChunkBlockKey, CustomBlockType> blocks) {
+        placedBlocks.put(WorldChunkKey.from(chunk), (HashMap<ChunkBlockKey, CustomBlockType>) blocks.clone());
     }
 
     public void place(Location location, CustomBlockType type, boolean virtual) {
@@ -42,8 +89,9 @@ public class CustomBlockManagerImpl implements CustomBlockManager {
 
         ChunkBlockKey chunkBlockKey = ChunkBlockKey.from(location);
         if (blocks.remove(chunkBlockKey) != null) {
-            if (blocks.isEmpty()) placedBlocks.remove(worldChunkKey);
             if (setAir) location.getBlock().setType(Material.AIR);
+            if (!blocks.isEmpty()) return;
+            MoonBreak.instance().blockLoader().wipeSavedChunkData(location.getChunk());
         }
     }
 
