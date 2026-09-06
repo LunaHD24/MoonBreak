@@ -15,7 +15,10 @@ public class ServerTickStartListener implements Listener {
 
         tickCount++;
         if (tickCount >= 5 * 60 * 20) {
-            MoonBreak.instance().blockLoader().saveAllBlocks();
+            if (!MoonBreak.instance().getServer().getPluginManager().isPluginEnabled(MoonBreak.instance())) {
+                return;
+            }
+            MoonBreak.instance().blockLoader().saveAllBlocks(true);
             tickCount = 0;
         }
     }

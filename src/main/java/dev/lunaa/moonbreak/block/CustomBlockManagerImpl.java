@@ -1,38 +1,79 @@
 package dev.lunaa.moonbreak.block;
 
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import dev.lunaa.moonbreak.MoonBreak;
+import org.bukkit.*;
 
-import java.util.HashMap;
-import java.util.Optional;
+import java.util.*;
 
 public class CustomBlockManagerImpl implements CustomBlockManager {
 
-    private final HashMap<Long, HashMap<Location, CustomBlockType>> placedBlocks = new HashMap<>();
+    private final HashMap<WorldChunkKey, HashMap<ChunkBlockKey, CustomBlockType>> placedBlocks = new HashMap<>();
 
-    public HashMap<Long, HashMap<Location, CustomBlockType>> getPlacedBlocks() {
-        return placedBlocks;
+    public void clearAllChunkData() {
+        placedBlocks.clear();
+    }
+
+    public void clearChunkData(Chunk chunk) {
+        WorldChunkKey worldChunkKey = WorldChunkKey.from(chunk);
+        placedBlocks.remove(worldChunkKey);
+    }
+
+    public int countAllChunksWithBlocks() {
+        return placedBlocks.size();
+    }
+
+    public int countAllBlocks() {
+        int count = 0;
+        for (Map.Entry<WorldChunkKey, HashMap<ChunkBlockKey, CustomBlockType>> entry : placedBlocks.entrySet()) {
+            count += entry.getValue().size();
+        }
+        return count;
+    }
+
+    public ArrayList<Chunk> chunksWithBlocks() {
+        ArrayList<Chunk> chunks = new ArrayList<>();
+        Set<WorldChunkKey> worldChunkKeys = Set.copyOf(placedBlocks.keySet());
+        if (worldChunkKeys.isEmpty()) return chunks;
+
+        for (WorldChunkKey worldChunkKey : worldChunkKeys) {
+            World world = Bukkit.getWorld(worldChunkKey.worldId());
+            if (world == null) {
+                MoonBreak.logger().warning("Tried obtaining chunks with blocks. World with the id " + worldChunkKey.worldId() + " was not found. Placed blocks will be deleted.");
+                placedBlocks.remove(worldChunkKey);
+                continue;
+            }
+
+            chunks.add(world.getChunkAt(worldChunkKey.chunkKey(), false));
+        }
+
+        return chunks;
+    }
+
+    @SuppressWarnings("unchecked")
+    public Optional<HashMap<ChunkBlockKey, CustomBlockType>> blocksInChunk(Chunk chunk) {
+        HashMap<ChunkBlockKey, CustomBlockType> blocks = placedBlocks.get(WorldChunkKey.from(chunk));
+        if (blocks == null) return Optional.empty();
+        return Optional.of((HashMap<ChunkBlockKey, CustomBlockType>) blocks.clone());
+    }
+
+    @SuppressWarnings("unchecked")
+    public void placeChunkBlocks(Chunk chunk, HashMap<ChunkBlockKey, CustomBlockType> blocks) {
+        placedBlocks.put(WorldChunkKey.from(chunk), (HashMap<ChunkBlockKey, CustomBlockType>) blocks.clone());
     }
 
     public void place(Location location, CustomBlockType type, boolean virtual) {
-        location = stripLocation(location);
-        long chunkKey = Chunk.getChunkKey(location);
-        boolean contains = placedBlocks.containsKey(chunkKey);
+        WorldChunkKey worldChunkKey = WorldChunkKey.from(location);
+        ChunkBlockKey chunkBlockKey = ChunkBlockKey.from(location);
 
-        HashMap<Location, CustomBlockType> blocks = contains ? placedBlocks.get(chunkKey) : new HashMap<>();
-        if (contains) {
-            if (blocks.containsKey(location)) {
-                throw new IllegalStateException("Tried placing block at an occupied location: " + location);
-            }
-        } else {
-            placedBlocks.put(chunkKey, blocks);
+        HashMap<ChunkBlockKey, CustomBlockType> blocks = placedBlocks.computeIfAbsent(worldChunkKey, _ -> new HashMap<>());
+        if (blocks.containsKey(chunkBlockKey)) {
+            throw new IllegalStateException("Tried placing block at an occupied location: " + location);
         }
 
         if (!virtual) {
             if (location.getBlock().getType() != type.material()) location.getBlock().setType(type.material());
         }
-        blocks.put(location, type);
+        blocks.put(chunkBlockKey, type);
     }
 
     @Override
@@ -42,17 +83,16 @@ public class CustomBlockManagerImpl implements CustomBlockManager {
 
     @Override
     public void remove(Location location, boolean setAir) {
-        location = stripLocation(location);
-        if (!isPlaced(location)) return;
+        WorldChunkKey worldChunkKey = WorldChunkKey.from(location);
+        HashMap<ChunkBlockKey, CustomBlockType> blocks = placedBlocks.get(worldChunkKey);
+        if (blocks == null) return;
 
-        long chunkKey = Chunk.getChunkKey(location);
-        if (!placedBlocks.containsKey(chunkKey)) return;
-
-        HashMap<Location, CustomBlockType> blocks = placedBlocks.get(chunkKey);
-        blocks.remove(location);
-        if (blocks.isEmpty()) placedBlocks.remove(chunkKey);
-
-        if (setAir) location.getBlock().setType(Material.AIR);
+        ChunkBlockKey chunkBlockKey = ChunkBlockKey.from(location);
+        if (blocks.remove(chunkBlockKey) != null) {
+            if (setAir) location.getBlock().setType(Material.AIR);
+            if (!blocks.isEmpty()) return;
+            MoonBreak.instance().blockLoader().wipeSavedChunkData(location.getChunk());
+        }
     }
 
     @Override
@@ -69,8 +109,6 @@ public class CustomBlockManagerImpl implements CustomBlockManager {
 
     @Override
     public boolean move(Location from, Location to, boolean virtual) {
-        from = stripLocation(from);
-        to = stripLocation(to);
         if (!isPlaced(from) || isPlaced(to)) return false;
 
         CustomBlockType type = get(from).orElseThrow();
@@ -82,37 +120,30 @@ public class CustomBlockManagerImpl implements CustomBlockManager {
 
     @Override
     public boolean isPlaced(Location location) {
-        location = stripLocation(location);
-        long chunkKey = Chunk.getChunkKey(location);
+        WorldChunkKey worldChunkKey = WorldChunkKey.from(location);
+        if (!placedBlocks.containsKey(worldChunkKey)) return false;
 
-        if (!placedBlocks.containsKey(chunkKey)) return false;
-        return placedBlocks.get(chunkKey).containsKey(location);
+        ChunkBlockKey chunkBlockKey = ChunkBlockKey.from(location);
+        return placedBlocks.get(worldChunkKey).containsKey(chunkBlockKey);
     }
 
     @Override
     public boolean isPlaced(Location location, CustomBlockType type) {
-        location = stripLocation(location);
-        long chunkKey = Chunk.getChunkKey(location);
+        WorldChunkKey worldChunkKey = WorldChunkKey.from(location);
+        if (!placedBlocks.containsKey(worldChunkKey)) return false;
 
-        if (!placedBlocks.containsKey(chunkKey)) return false;
-        if (!placedBlocks.get(chunkKey).containsKey(location)) return false;
-        return placedBlocks.get(chunkKey).get(location) == type;
+        ChunkBlockKey chunkBlockKey = ChunkBlockKey.from(location);
+        HashMap<ChunkBlockKey, CustomBlockType> blocks = placedBlocks.get(worldChunkKey);
+        return blocks.containsKey(chunkBlockKey) && blocks.get(chunkBlockKey) == type;
     }
 
     @Override
     public Optional<CustomBlockType> get(Location location) {
-        location = stripLocation(location);
-        long chunkKey = Chunk.getChunkKey(location);
-        if (!placedBlocks.containsKey(chunkKey)) return Optional.empty();
+        WorldChunkKey worldChunkKey = WorldChunkKey.from(location);
+        if (!placedBlocks.containsKey(worldChunkKey)) return Optional.empty();
 
-        HashMap<Location, CustomBlockType> blocks = placedBlocks.get(chunkKey);
-        if (!blocks.containsKey(location)) return Optional.empty();
-
-        return Optional.of(blocks.get(location));
-    }
-
-    private Location stripLocation(Location location) {
-        location = location.toBlockLocation();
-        return location.setRotation(0, 0);
+        ChunkBlockKey chunkBlockKey = ChunkBlockKey.from(location);
+        HashMap<ChunkBlockKey, CustomBlockType> blocks = placedBlocks.get(worldChunkKey);
+        return Optional.ofNullable(blocks.get(chunkBlockKey));
     }
 }

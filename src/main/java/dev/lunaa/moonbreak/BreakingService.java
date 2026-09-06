@@ -25,6 +25,11 @@ public class BreakingService {
     private static final HashMap<UUID, Long> activePlayers = new HashMap<>();
     private static final HashMap<UUID, LastState> lastStates = new HashMap<>();
 
+    public void clearAllData() {
+        activePlayers.clear();
+        lastStates.clear();
+    }
+
     public static void removeBreakSpeedModifier(Player player) {
         Objects.requireNonNull(player.getAttribute(Attribute.BLOCK_BREAK_SPEED)).removeModifier(MODIFIER_KEY);
     }
