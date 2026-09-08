@@ -3,7 +3,6 @@ package dev.lunaa.moonbreak.block.storage;
 import dev.lunaa.moonbreak.MoonBreak;
 import dev.lunaa.moonbreak.block.WorldChunkKey;
 import org.bukkit.Bukkit;
-import org.bukkit.World;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -94,13 +93,6 @@ public final class ChunkIndexStorage {
         while (buffer.remaining() >= 24) {
             UUID worldId = new UUID(buffer.getLong(), buffer.getLong());
             long chunkKey = buffer.getLong();
-
-            World world = Bukkit.getWorld(worldId);
-            if (world == null) {
-                MoonBreak.logger().warning("Tried loading chunk index. Could not find world with id " + worldId + " - skipping");
-                continue;
-            }
-
             worldChunkKeys.add(new WorldChunkKey(worldId, chunkKey));
         }
     }
