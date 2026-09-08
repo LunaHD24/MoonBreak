@@ -72,8 +72,8 @@ public class ThrottledWipeTask implements Runnable {
                 continue;
             }
 
-            int chunkX = (int) (worldChunkKey.chunkKey() >> 32);
-            int chunkZ = (int) worldChunkKey.chunkKey();
+            int chunkX = (int) worldChunkKey.chunkKey();
+            int chunkZ = (int) (worldChunkKey.chunkKey() >>> 32);
             world.getChunkAtAsync(chunkX, chunkZ).thenAccept(chunk -> {
                 loader.wipeSavedChunkData(chunk);
                 processedChunks.incrementAndGet();
