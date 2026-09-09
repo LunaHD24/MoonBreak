@@ -16,6 +16,9 @@ Detailed information on how to install the plugin and integrate the API using Gr
 
 ## Getting Started
 
+> [!NOTE]
+> Registration of any kind **must always** happen during `STARTUP`. Make sure to configure your plugin using MoonBreak correctly!
+
 ### Creating a Custom Tool
 (Mining Speed/Level are not limited to vanilla values)
 ```java
@@ -56,5 +59,5 @@ CustomBlockManager.manager().place(yourLocation, LIGHT_OBSIDIAN);
 
 ## Documentation & License
 Documentation can be found in the wiki [here](https://github.com/LunaHD24/MoonBreak/wiki).<br>
-JavaDocs in the web can be found [here](https://lunaa.dev/repository/maven/dev/lunaa/moonbreak/moonbreak-api/1.2.0/javadoc).<br>
+JavaDocs in the web can be found [here](https://lunaa.dev/repository/maven/dev/lunaa/moonbreak/moonbreak-api/1.2.1/javadoc).<br>
 MoonBreak is licensed under the GNU General Public License v3.0
