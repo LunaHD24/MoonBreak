@@ -76,10 +76,10 @@ public class CustomToolImpl implements CustomTool {
         ItemStack item = new ItemStack(type.material());
         ItemMeta meta = baseMeta == null ? item.getItemMeta() : baseMeta.clone();
 
-        meta.displayName(type.name());
-        meta.lore(type.lore());
-        meta.setUnbreakable(unbreakable);
+        if (!meta.hasDisplayName()) meta.displayName(type.name());
+        if (!meta.hasLore()) meta.lore(type.lore());
 
+        meta.setUnbreakable(unbreakable);
         if (meta instanceof Damageable damageable) {
             short maxDurability = item.getType().getMaxDurability();
             double sizedDamage = (double) maxDurability / type.maxDurability();

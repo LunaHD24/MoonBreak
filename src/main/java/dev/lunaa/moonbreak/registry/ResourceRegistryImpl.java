@@ -13,6 +13,8 @@ public final class ResourceRegistryImpl<T extends Registrable> implements Resour
 
     @Override
     public void register(Key key, T entry) {
+        if (keyToValue.containsKey(key)) throw new IllegalArgumentException("Another entry with the key " + key.asString() + " already exists");
+
         keyToValue.put(key, entry);
         valueToKey.put(entry, key);
     }
@@ -25,5 +27,10 @@ public final class ResourceRegistryImpl<T extends Registrable> implements Resour
     @Override
     public Optional<Key> getKey(T entry) {
         return Optional.ofNullable(valueToKey.get(entry));
+    }
+
+    @Override
+    public boolean isRegistered(T entry) {
+        return valueToKey.containsKey(entry);
     }
 }

@@ -32,4 +32,11 @@ public interface ResourceRegistry<T extends Registrable> {
      * @return the key if registered
      */
     Optional<Key> getKey(T entry);
+
+    /**
+     * Returns if an entry is registered
+     * @param entry the entry
+     * @return if the entry is registered
+     */
+    boolean isRegistered(T entry);
 }

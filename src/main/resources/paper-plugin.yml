@@ -10,3 +10,8 @@ bootstrapper: dev.lunaa.moonbreak.MoonBreakBootstrap
 
 authors: [ lunahd24 ]
 website: https://lunaa.dev/
+
+permissions:
+  moonbreak.command.moonbreak:
+    description: "Permission for moonbreak command"
+    default: op

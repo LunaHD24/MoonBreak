@@ -8,6 +8,7 @@ import dev.lunaa.moonbreak.tool.CustomToolTypeImpl;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -18,11 +19,16 @@ import java.util.Optional;
 public class PlayerBreakBlockListener implements Listener {
 
     @EventHandler
-    public void onPlayerBreakBlock(BlockBreakEvent e) {
+    public void onPlayerBreakBlockPre(BlockBreakEvent e) {
         Player player = e.getPlayer();
         Optional<CustomTool> optionalTool = CustomTool.fromPlayer(player);
         optionalTool.ifPresent(customTool -> executeHook(e, true, customTool));
-        if (e.isCancelled()) return;
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPlayerBreakBlockPost(BlockBreakEvent e) {
+        Player player = e.getPlayer();
+        Optional<CustomTool> optionalTool = CustomTool.fromPlayer(player);
 
         CustomBlockManagerImpl blockManager = MoonBreak.instance().blockManager();
         Location blockLocation = e.getBlock().getLocation();
