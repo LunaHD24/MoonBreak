@@ -16,7 +16,7 @@ Detailed information on how to install the plugin and integrate the API using Gr
 
 ## Getting Started
 
-> [!NOTE]
+> [!WARNING]
 > Registration of any kind **must always** happen during `STARTUP`. Make sure to configure your plugin using MoonBreak correctly!
 
 ### Creating a Custom Tool
